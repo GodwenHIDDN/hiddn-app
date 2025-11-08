@@ -75,7 +75,7 @@ function AnimatedRoutes() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: reduceMotion ? 0 : -6 }}
         transition={{ duration: reduceMotion ? 0.18 : 0.28, ease: [0.22, 1, 0.36, 1] }}
-        style={{ background: '#000' }}
+        style={{ background: 'var(--bg)' }}
       >
         <Suspense fallback={null}>
         <Routes location={location}>

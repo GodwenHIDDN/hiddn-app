@@ -224,6 +224,21 @@ button:focus-visible, a:focus-visible, .pressable:focus-visible {
 }
 @media (prefers-color-scheme: dark) { .btn-glass { background: rgba(0,0,0,0.28); border-color: rgba(255,255,255,0.16); } }
 
+/* Light scheme premium adjustments */
+@media (prefers-color-scheme: light) {
+  .btn-glass {
+    background: rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.12);
+    color: #0F172A;
+    box-shadow: 0 6px 14px rgba(17,24,39,0.10);
+  }
+  .btn-solid {
+    background: #111827; /* deep slate for strong contrast */
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(17,24,39,0.16);
+  }
+}
+
 /* Pop animation when adding to cart/wishlist */
 @keyframes pop {
   0% { transform: scale(1); }

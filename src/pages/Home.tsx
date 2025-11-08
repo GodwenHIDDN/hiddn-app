@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchCreatorsMock } from '../hiddn/core/data/creators';
 import { computeNewCreators, cardBackground } from '../hiddn/core/modules/newCreators';
 import type { NewCreatorsSection } from '../hiddn/core/modules/newCreators';
-import AdsStories from '../components/AdsStories';
 import { api, getProducts } from '../lib/api';
 import Img from '../components/ui/Image';
 
@@ -1025,21 +1024,6 @@ export default function Home() {
         </Link>
       </section>
 
-      <section className="mt-8">
-        <Link to="/products" className="block">
-          <div className="overflow-hidden rounded-2xl bg-neutral-900">
-            <div className="aspect-[16/9] w-full">
-              <Img src="https://source.unsplash.com/featured/?raw,denim,jeans,person,model&sig=204" alt="Atelier Détails Editorial" className="w-full h-full object-cover" />
-            </div>
-          </div>
-          <div className="mt-2" style={{ marginLeft: '2%' }}>
-            <div className="text-[11px] uppercase tracking-wide text-neutral-500">Gesponsert</div>
-            <h2 className="font-display text-2xl">Atelier Détails</h2>
-            <p className="text-sm text-neutral-600">Raw Denim. Präzise Schnitte. Premium Attitude.</p>
-          </div>
-        </Link>
-      </section>
-
       {/* Sponsored band A – bottom */}
       <section className="mt-6">
         <div style={{ background: 'var(--card)', marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
@@ -1143,8 +1127,44 @@ export default function Home() {
         </Link>
       </section>
       {/* Paid creators carousel (9:16) */}
-      <section className="mt-4">
-        <AdsStories />
+      <section className="mt-10">
+        <div style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)', borderTop:'1px solid var(--border)', borderBottom:'1px solid var(--border)', background:'var(--card)' }}>
+          <div className="px-4 py-3 text-[11px] uppercase tracking-wide opacity-70" style={{ color:'var(--text)' }}>Brands</div>
+          <div className="px-4 flex gap-6 overflow-x-auto no-scrollbar py-3" style={{ WebkitOverflowScrolling:'touch' as any }}>
+            {['HIDDN','AURA','NOIR STUDIO','ATELIER DÉTAILS','COPENHAGEN','KAZAR','VALE'].map((b)=> (
+              <div key={b} className="shrink-0 rounded-full px-4 py-2" style={{ background:'var(--input-bg)', color:'var(--text)', border:'1px solid var(--border)' }}>{b}</div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-10 px-4">
+        <Link to="/products" className="block">
+          <div className="rounded-3xl overflow-hidden" style={{ position:'relative', background:'linear-gradient(135deg, var(--hero-start), var(--hero-end))' }}>
+            <div className="aspect-[16/9] w-full">
+              <Img src="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?w=1600&auto=format&fit=crop" alt="Weekly Spotlight" className="w-full h-full object-cover opacity-80" />
+            </div>
+            <div style={{ position:'absolute', left:18, bottom:18, right:18, color:'#fff' }}>
+              <div className="text-[11px] uppercase tracking-wide opacity-90">Weekly Spotlight</div>
+              <h3 className="font-display" style={{ fontSize:26, letterSpacing:0.2, marginTop:6 }}>Raw Essentials</h3>
+              <div className="mt-3 inline-block pressable btn-glass" style={{ padding:'10px 14px', borderRadius:12 }}>Kollektion ansehen</div>
+            </div>
+          </div>
+        </Link>
+      </section>
+
+      <section className="mt-10 px-4">
+        <div className="rounded-2xl" style={{ background:'var(--card)', border:'1px solid var(--border)' }}>
+          <div className="p-5">
+            <div className="text-[11px] uppercase tracking-wide opacity-80" style={{ color:'var(--text)' }}>Stay in the loop</div>
+            <h3 className="font-display text-2xl" style={{ color:'var(--text)' }}>HIDDN Weekly</h3>
+            <div className="text-sm opacity-80" style={{ color:'var(--text)' }}>Neue Drops, Creator‑News und exklusive Aktionen.</div>
+            <div className="mt-3 flex gap-2">
+              <Link to="/products" className="pressable btn-solid" style={{ padding:'12px 16px', borderRadius:12 }}>Jetzt abonnieren</Link>
+              <Link to="/about" className="pressable btn-glass" style={{ padding:'12px 16px', borderRadius:12 }}>Mehr erfahren</Link>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="text-center py-8">

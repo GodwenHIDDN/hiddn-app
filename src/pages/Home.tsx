@@ -1167,6 +1167,108 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Creator der Woche */}
+      <section className="mt-10 px-4">
+        <div className="rounded-3xl overflow-hidden shadow-md" style={{ border:'1px solid var(--border)', background:'var(--card)' }}>
+          <div className="grid grid-cols-[110px_1fr] gap-3 p-4 items-center">
+            <div className="aspect-[3/4] overflow-hidden rounded-xl bg-neutral-200">
+              <Img src="https://source.unsplash.com/featured/?portrait,studio,model&sig=2501" alt="Creator der Woche" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <div className="text-[11px] uppercase tracking-wide opacity-80" style={{ color:'var(--text)' }}>Creator der Woche</div>
+              <h3 className="font-display text-2xl" style={{ color:'var(--text)' }}>Noir Studio</h3>
+              <p className="text-sm opacity-80" style={{ color:'var(--text)' }}>Saubere Schnitte, präzise Details, minimaler Lärm.</p>
+              <div className="mt-3">
+                <Link to="/creator" className="pressable btn-solid" style={{ padding:'10px 14px', borderRadius:12 }}>Profil ansehen</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trending Tags */}
+      <section className="mt-8 px-4">
+        <div className="text-[11px] uppercase tracking-wide opacity-80" style={{ color:'var(--text)' }}>Trending Tags</div>
+        <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar">
+          {['rawdenim','cleanfit','monochrome','utility','softlayers','athleisure','newin','editorial'].map(t => (
+            <Link key={t} to={`/products?tag=${encodeURIComponent(t)}`} className="shrink-0 pressable px-3 py-2 text-sm rounded-full" style={{ background:'var(--input-bg)', color:'var(--text)', border:'1px solid var(--border)' }}>#{t}</Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Partner Spotlight */}
+      <section className="mt-10 px-4">
+        <Link to="/products" className="block">
+          <div className="rounded-2xl overflow-hidden border" style={{ borderColor:'var(--border)', position:'relative' }}>
+            <div className="aspect-[16/9] w-full">
+              <Img src="https://images.unsplash.com/photo-1520975867597-0f29a98f5f3b?w=1600&auto=format&fit=crop" alt="Partner Spotlight" className="w-full h-full object-cover" />
+            </div>
+            <div style={{ position:'absolute', left:16, bottom:16, right:16, color:'#fff' }}>
+              <div className="text-[11px] uppercase tracking-wide opacity-90">Partner Spotlight</div>
+              <h3 className="font-display" style={{ fontSize:24, letterSpacing:0.2 }}>Copenhagen Studios</h3>
+            </div>
+          </div>
+        </Link>
+      </section>
+
+      {/* Community Picks – horizontal rail */}
+      <section className="mt-10 px-4">
+        <div className="flex items-end justify-between mb-2">
+          <h3 className="font-display text-xl" style={{ color:'var(--text)' }}>Community Picks</h3>
+          <Link to="/products" className="text-sm" style={{ color:ACCENT }}>Mehr →</Link>
+        </div>
+        <div className="flex gap-3 overflow-x-auto no-scrollbar">
+          {[...Array(8)].map((_,i) => (
+            <Link key={`cp-${i}`} to="/products" className="shrink-0 w-[180px] pressable">
+              <div className="rounded-2xl overflow-hidden border" style={{ borderColor:'var(--border)', background:'var(--card)' }}>
+                <Img src={`https://source.unsplash.com/featured/?style,editorial&sig=${1700+i}`} alt={`Community Pick ${i+1}`} className="w-full h-[220px] object-cover" />
+              </div>
+              <div className="mt-1 text-sm" style={{ color:'var(--text)' }}>Pick #{i+1}</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Editorial Duo */}
+      <section className="mt-10 px-4">
+        <div className="grid grid-cols-2 gap-3">
+          <Link to="/products" className="block">
+            <div className="overflow-hidden rounded-2xl">
+              <div className="aspect-[4/5] w-full">
+                <Img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1200&auto=format&fit=crop" alt="Editorial 1" className="w-full h-full object-cover" />
+              </div>
+            </div>
+            <h4 className="mt-2 font-display text-xl" style={{ color:'var(--text)' }}>Clean Classics</h4>
+          </Link>
+          <Link to="/products" className="block">
+            <div className="overflow-hidden rounded-2xl">
+              <div className="aspect-[4/5] w-full">
+                <Img src="https://images.unsplash.com/photo-1549439602-43ebca2327b1?w=1200&auto=format&fit=crop" alt="Editorial 2" className="w-full h-full object-cover" />
+              </div>
+            </div>
+            <h4 className="mt-2 font-display text-xl" style={{ color:'var(--text)' }}>Soft Layers</h4>
+          </Link>
+        </div>
+      </section>
+
+      {/* Mini Footer Links */}
+      <section className="mt-10 px-4">
+        <div className="text-center text-xs opacity-70" style={{ color:'var(--text)' }}>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {[
+              ['Über HIDDN','/about'],
+              ['Hilfe','/help'],
+              ['Datenschutz','/privacy'],
+              ['Impressum','/about'],
+              ['Kontakt','/help']
+            ].map(([t,href]) => (
+              <Link key={t as string} to={href as string} className="underline opacity-80 hover:opacity-100">{t}</Link>
+            ))}
+          </div>
+          <div className="mt-3">© {new Date().getFullYear()} HIDDN</div>
+        </div>
+      </section>
+
       <section className="text-center py-8">
         <div className="mt-2 flex gap-3 justify-center">
           <button onClick={createBrand} disabled={creating} className="px-4 py-2 rounded-md border border-brand-200 text-brand-700 hover:bg-brand-50 disabled:opacity-50">

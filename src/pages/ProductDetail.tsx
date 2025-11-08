@@ -1,5 +1,5 @@
 import { useLocation, useParams } from 'react-router-dom';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../lib/api';
 
@@ -29,6 +29,31 @@ export default function ProductDetail() {
   const [saved, setSaved] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const activeImg = useMemo(() => [hero, ...gallery][activeIdx] || hero, [activeIdx]);
+  const [navH, setNavH] = useState<number>(56);
+  useEffect(() => {
+    const getNav = () => document.querySelector('nav[aria-label="Hauptnavigation"]') as HTMLElement | null;
+    const el = getNav();
+    const read = () => {
+      const n = getNav();
+      if (!n) return;
+      const h = n.offsetHeight || 56;
+      setNavH(h);
+    };
+    read();
+    let ro: ResizeObserver | null = null;
+    if (el && 'ResizeObserver' in window) {
+      try { ro = new ResizeObserver(read); ro.observe(el); } catch {}
+    }
+    const onResize = () => read();
+    window.addEventListener('resize', onResize);
+    const onCustom = () => read();
+    window.addEventListener('hiddn-update', onCustom as any);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('hiddn-update', onCustom as any);
+      if (ro) try { ro.disconnect(); } catch {}
+    };
+  }, []);
 
   // init saved state from wishlist
   useState(() => {
@@ -84,7 +109,22 @@ export default function ProductDetail() {
       } catch {}
       setTimeout(() => setAdded(true), 180);
     } catch {
-      setMsg('Konnte nicht zum Warenkorb hinzufügen');
+      // Offline/local fallback: still add to pseudo cart so UX flows smoothly
+      try {
+        const k = 'hiddn_cart_count';
+        const n = parseInt(localStorage.getItem(k) || '0') || 0;
+        localStorage.setItem(k, String(n + 1));
+        const fk = 'hiddn_cart_fallback_items';
+        const raw = localStorage.getItem(fk);
+        const items = raw ? JSON.parse(raw) : [];
+        items.push({ product_id: id, qty: 1, price_cents: priceCents });
+        localStorage.setItem(fk, JSON.stringify(items));
+        window.dispatchEvent(new Event('hiddn-update'));
+        setMsg('Zum Warenkorb (lokal) hinzugefügt');
+        setTimeout(() => setAdded(true), 180);
+      } catch {
+        setMsg('Konnte nicht zum Warenkorb hinzufügen');
+      }
     } finally {
       setAdding(false);
       setTimeout(() => setAdded(false), 900);
@@ -92,7 +132,7 @@ export default function ProductDetail() {
   }
 
   return (
-    <main className="max-w-md mx-auto" style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom))', color: 'var(--text)' }}>
+    <main className="max-w-md mx-auto" style={{ paddingBottom: `calc(${navH}px + 108px + env(safe-area-inset-bottom))`, color: 'var(--text)' }}>
       <section className="px-5 pt-4">
         <h1 className="font-display text-2xl" style={{ letterSpacing: 0.3 }}>{title}</h1>
         <div className="mt-1 flex items-baseline gap-2">
@@ -171,15 +211,15 @@ export default function ProductDetail() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 30, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.22,1,0.36,1] }}
-            className="fixed left-1/2 -translate-x-1/2 bottom-[calc(76px+env(safe-area-inset-bottom))] rounded-full px-4 py-2 text-sm"
-            style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--text)', boxShadow: '0 8px 18px rgba(0,0,0,0.10)' }}
+            className="fixed left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-sm"
+            style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--text)', boxShadow: '0 8px 18px rgba(0,0,0,0.10)', bottom: `calc(${navH}px + 20px + env(safe-area-inset-bottom))` }}
           >
             {msg}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, paddingBottom: 'env(safe-area-inset-bottom)', zIndex: 50 }}>
+      <div style={{ position: 'fixed', left: 0, right: 0, bottom: `calc(${navH}px + 12px + env(safe-area-inset-bottom))`, zIndex: 60 }}>
         <div className="mx-auto max-w-md border-t" style={{ background: 'var(--bg)', borderColor: 'var(--border)', backdropFilter: 'saturate(140%) blur(10px)', WebkitBackdropFilter: 'saturate(140%) blur(10px)', boxShadow: '0 -10px 24px rgba(0,0,0,0.06)' }}>
           <div className="px-5 py-3 grid grid-cols-[1fr_auto] gap-3 items-center">
             <button
@@ -197,7 +237,16 @@ export default function ProductDetail() {
               className="rounded-xl pressable"
               style={{ width: 52, height: 52, background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--text)' }}
             >
-              <span style={{ fontSize: 18 }}>{saved ? '♥' : '♡'}</span>
+              {/* Heart icon with currentColor, no red fill change */}
+              {saved ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12.001 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6.01 4.01 4 6.5 4c1.54 0 3.04.81 3.86 2.09h.28C11.46 4.81 12.96 4 14.5 4 16.99 4 19 6.01 19 8.5c0 3.78-3.4 6.86-8.55 11.54l-1.449 1.31z" fill="currentColor"/>
+                </svg>
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M16.5 4c-1.74 0-3.41.81-4.5 2.09C10.91 4.81 9.24 4 7.5 4 4.42 4 2 6.42 2 9.5c0 3.57 3.4 6.64 8.55 11.31l.95.86.95-.86C18.6 16.14 22 13.07 22 9.5 22 6.42 19.58 4 16.5 4zm-4.4 15.55l-.1.09-.1-.09C7.14 15.24 4 12.39 4 9.5 4 7.5 5.5 6 7.5 6c1.54 0 3.04.99 3.57 2.36h1.87C13.46 6.99 14.96 6 16.5 6 18.5 6 20 7.5 20 9.5c0 2.89-3.14 5.74-7.9 10.05z" fill="currentColor"/>
+                </svg>
+              )}
             </button>
           </div>
         </div>

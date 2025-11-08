@@ -20,6 +20,26 @@ export default function Navbar() {
       else mql.removeListener(onChange as (this: MediaQueryList, ev: MediaQueryListEvent) => any);
     };
   }, []);
+  // Expose navbar height as CSS variable for precise positioning of floating CTAs
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const setVar = () => {
+      try { document.documentElement.style.setProperty('--nav-height', `${el.offsetHeight}px`); } catch {}
+    };
+    setVar();
+    let ro: ResizeObserver | null = null;
+    try {
+      ro = new ResizeObserver(() => setVar());
+      ro.observe(el);
+    } catch {}
+    const onResize = () => setVar();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      if (ro) try { ro.disconnect(); } catch {}
+    };
+  }, []);
   // Softer glass: slightly more opaque and a bit less blur
   const BG = isDark ? 'rgba(10,10,10,0.72)' : '#ffffff';
   const BORDER = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.08)';

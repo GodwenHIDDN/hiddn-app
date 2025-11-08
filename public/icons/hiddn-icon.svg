@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background (maskable friendly safe area) -->
+  <rect width="512" height="512" rx="96" fill="#111111"/>
+  <!-- Monogram H (centered, minimalist) -->
+  <g fill="#ffffff" transform="translate(116,106)">
+    <!-- left stem -->
+    <rect x="0" y="0" width="56" height="300" rx="16" />
+    <!-- right stem -->
+    <rect x="224" y="0" width="56" height="300" rx="16" />
+    <!-- crossbar -->
+    <rect x="72" y="128" width="136" height="44" rx="22" />
+  </g>
+  <!-- HIDDN text below (subtle) -->
+  <g fill="#ffffff" opacity="0.0"/>
+</svg>

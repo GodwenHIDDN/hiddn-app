@@ -1,0 +1,46 @@
+{
+  "colors": {
+    "bgDeep": "#050608",
+    "cardDark": "#0C0E10",
+    "cardLight": "#16181C",
+    "text": "#FFFFFF",
+    "textSub": "#A1A1A1",
+    "border": "rgba(255,255,255,0.08)",
+    "accentGradient": "linear-gradient(90deg, #7F5CFF, #D34DFF)"
+  },
+  "spacing": {
+    "containerGutter": 18,
+    "cardRadius": 16,
+    "cardPadding": 16,
+    "sectionMaxWidth": 420
+  },
+  "typography": {
+    "fontFamily": ["Inter", "Poppins", "sans-serif"],
+    "letterSpacing": 0.2,
+    "lineHeight": 1.4,
+    "headingWeight": 600,
+    "paragraphSize": 14,
+    "paragraphWeight": 400
+  },
+  "components": {
+    "section": {
+      "maxWidth": 420,
+      "paddingX": 18
+    },
+    "card": {
+      "background": "#0C0E10",
+      "radius": 16,
+      "padding": 16,
+      "border": "rgba(255,255,255,0.08)"
+    },
+    "cardLight": {
+      "background": "#16181C"
+    },
+    "buttonPrimary": {
+      "radius": 16,
+      "paddingY": 14,
+      "gradient": "linear-gradient(90deg, #7F5CFF, #D34DFF)",
+      "textColor": "#FFFFFF"
+    }
+  }
+}

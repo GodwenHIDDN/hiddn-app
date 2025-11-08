@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon2.svg?v=592" />
+    <link rel="manifest" href="/manifest.webmanifest?v=589" />
+    <meta name="theme-color" content="#2563eb" />
+    <!-- iOS PWA meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="HIDDN" />
+    <link rel="apple-touch-icon" href="/icon2.svg?v=592" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <style>
+      /* Prevent initial flash before app CSS loads */
+      :root { color-scheme: light dark; }
+      body { margin:0; background:#FAF9F6; }
+      @media (prefers-color-scheme: dark) {
+        body { background:#0a0a0a; }
+      }
+      #pre-splash { position: fixed; inset: 0; background:#FAF9F6; z-index: 9998; display:flex; align-items:center; justify-content:center; }
+      #pre-splash.fade { opacity: 0; transition: opacity .28s ease; }
+      #pre-splash .gear { width: 56px; height: 56px; color:#2563eb; opacity:.95; }
+      @keyframes preGearSpin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+      .gear path { transform-origin: 50% 50%; animation: preGearSpin 1.2s linear infinite; }
+      @media (prefers-color-scheme: dark) {
+        #pre-splash { background:#0a0a0a; }
+        #pre-splash .gear { color:#6D28D9; }
+      }
+      #nojs-shell { position:fixed; inset:0; display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; z-index:9997; padding:20px; font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:#111; background:rgba(250,249,246,0.98); }
+      @media (prefers-color-scheme: dark) { #nojs-shell { color:#fafafa; background:rgba(10,10,10,0.98); } }
+      #nojs-shell .brand { font-weight:700; font-size:20px; opacity:.9; }
+      #nojs-shell .links { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+      #nojs-shell .links a { display:inline-block; padding:8px 12px; border-radius:10px; background:#111; color:#fff; text-decoration:none; font-weight:600; }
+      @media (prefers-color-scheme: dark) { #nojs-shell .links a { background:#fff; color:#000; } }
+    </style>
+    <title>hiddn</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="nojs-shell">
+      <div class="brand">HIDDN</div>
+      <div>Wird geladen … Falls nichts passiert, nutze einen der Links:</div>
+      <div class="links">
+        <a href="/safe.html">Sichere Ansicht</a>
+        <a href="/?debug=1">Mit Debug</a>
+      </div>
+    </div>
+    <script>
+      (function(){
+        try {
+          var shown=false; var t=setTimeout(function(){
+            if ((window).__booted) return; shown=true;
+            var box=document.createElement('div');
+            box.id='boot-warn';
+            box.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;max-height:45vh;overflow:auto;background:rgba(0,0,0,0.82);color:#fff;padding:10px;border-radius:10px;z-index:999999;font:12px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;white-space:pre-wrap';
+            box.innerText='App‑Bundle hat nicht gebootet.\n\nTipps:\n• Konsole/Netzwerk öffnen (erste Fehlermeldung)\n• Content‑Blocker/Tracking‑Schutz deaktivieren\n• Testlinks: /safe.html, /?safe=1, /about?safe=1\n\nUser‑Agent: '+navigator.userAgent;
+            document.body.appendChild(box);
+          }, 3200);
+          function clearBootWarn(){ try{ var b=document.getElementById('boot-warn'); b && b.remove(); }catch(e){} }
+          window.addEventListener('hiddn-booted', clearBootWarn);
+          window.addEventListener('load', function(){ if (window.__booted) { try{clearTimeout(t);}catch(e){} clearBootWarn(); } });
+        } catch(e) {}
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

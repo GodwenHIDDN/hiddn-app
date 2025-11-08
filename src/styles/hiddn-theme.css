@@ -1,0 +1,91 @@
+:root {
+  --bg-deep: #050505;
+  --card-dark: #101010;
+  --card-light: #111111;
+  --text: #FFFFFF;
+  --text-sub: #A1A1A1;
+  --border: rgba(255,255,255,0.08);
+  --accent-grad: linear-gradient(90deg, #7F5CFF, #D34DFF);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: var(--bg-deep);
+  color: var(--text);
+}
+
+/* Structure */
+.section { max-width: 420px; margin: 0 auto; padding-left: 24px; padding-right: 24px; box-sizing: border-box; }
+.page-pad { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); }
+.card { background-color: var(--card-dark); border-radius: 16px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border); color: var(--text); }
+.card-light { background-color: var(--card-light); color: var(--text); }
+
+/* Creator Access Code styles */
+.container-access {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(127, 92, 255, 0.3);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  text-align: center;
+  backdrop-filter: blur(25px);
+  box-shadow: 0 0 20px rgba(127, 92, 255, 0.1);
+}
+.code-rows { display: flex; flex-wrap: wrap; justify-content: center; }
+.code-box {
+  width: 32px; height: 40px; margin: 4px; border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(127, 92, 255, 0.4);
+  text-align: center; font-size: 18px; font-family: 'Courier New', monospace;
+  color:#FFFFFF; transition: all 0.2s ease; outline: none;
+}
+.code-box:focus {
+  border-color:#D34DFF; background: rgba(127,92,255,0.10);
+  box-shadow: 0 0 8px rgba(127,92,255,0.5);
+}
+.access-verified {
+  animation: accessGlow 900ms ease both;
+}
+@keyframes accessGlow { from { box-shadow: 0 0 0 rgba(127,92,255,0.0);} to { box-shadow: 0 0 28px rgba(127,92,255,0.35);} }
+.access-invalid { animation: vib 180ms ease 0s 2; }
+@keyframes vib { 0%{ transform: translateX(0);} 25%{ transform: translateX(-3px);} 50%{ transform: translateX(3px);} 75%{ transform: translateX(-2px);} 100%{ transform: translateX(0);} }
+
+/* Typography */
+* { font-family: 'Inter','Poppins',sans-serif; letter-spacing: 0.2px; line-height: 1.4; text-rendering: optimizeLegibility; }
+h1, h2, h3 { font-weight: 600; margin-bottom: 6px; }
+p { font-size: 14px; font-weight: 400; color: var(--text-sub); }
+
+/* Buttons */
+.btn-primary { width: 100%; border-radius: 16px; padding: 14px 0; color: #fff; background: var(--accent-grad); border: none; }
+.btn-outline { width: 100%; border-radius: 16px; padding: 12px 0; color: var(--text); background: transparent; border: 1px solid var(--border); }
+
+/* Scroll fade helpers (top/bottom overflows) */
+.fade-top { position: sticky; top: 0; height: 24px; background: linear-gradient(to bottom, rgba(5,6,8,1), rgba(5,6,8,0)); pointer-events: none; }
+.fade-bottom { position: sticky; bottom: 0; height: 24px; background: linear-gradient(to top, rgba(5,6,8,1), rgba(5,6,8,0)); pointer-events: none; }
+
+/* Scoped DARK MODE FIX (only when .deep-black is on html/body) */
+html.deep-black, body.deep-black { background-color: #000000 !important; color: #FFFFFF !important; }
+html.deep-black section, html.deep-black div, html.deep-black main, html.deep-black footer, html.deep-black header,
+body.deep-black section, body.deep-black div, body.deep-black main, body.deep-black footer, body.deep-black header {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+html.deep-black h1, html.deep-black h2, html.deep-black h3, html.deep-black h4, html.deep-black h5, html.deep-black h6,
+html.deep-black p, html.deep-black span, html.deep-black label,
+body.deep-black h1, body.deep-black h2, body.deep-black h3, body.deep-black h4, body.deep-black h5, body.deep-black h6,
+body.deep-black p, body.deep-black span, body.deep-black label { color: #FFFFFF !important; }
+html.deep-black small, html.deep-black .subtitle, html.deep-black .hint, html.deep-black .footer-text, html.deep-black .slogan,
+body.deep-black small, body.deep-black .subtitle, body.deep-black .hint, body.deep-black .footer-text, body.deep-black .slogan {
+  color: #BBBBBB !important; opacity: 1 !important;
+}
+html.deep-black button, html.deep-black .btn, body.deep-black button, body.deep-black .btn {
+  background: linear-gradient(90deg, #7F5CFF, #D34DFF) !important; color: #FFFFFF !important; border: none !important;
+}
+html.deep-black .card, html.deep-black .container, html.deep-black .list, html.deep-black .section, html.deep-black .block,
+body.deep-black .card, body.deep-black .container, body.deep-black .list, body.deep-black .section, body.deep-black .block {
+  background-color: #000000 !important;
+}

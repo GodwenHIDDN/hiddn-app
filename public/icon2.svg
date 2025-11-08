@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="HIDDN App Icon v2">
+  <!-- Dark premium background -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#0F1012"/>
+  <!-- Minimal retail bag in white -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bag body -->
+    <rect x="136" y="164" width="240" height="232" rx="28"/>
+    <!-- Handle (premium curve) -->
+    <path d="M176 168 c0 -48 32 -84 80 -84 s80 36 80 84"/>
+    <!-- Small tag (brand cue) -->
+    <path d="M348 220 l50 36 l-28 36 l-48 -34"/>
+    <circle cx="336" cy="236" r="7" fill="#FFFFFF" stroke="none"/>
+  </g>
+</svg>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HIDDN – Safe Static</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:#0a0a0b; color:#fff; }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
+    .card { border:1px solid rgba(255,255,255,0.16); border-radius:12px; overflow:hidden; }
+    .img { width:100%; height:180px; object-fit:cover; display:block; filter:brightness(0.9); }
+    a { color:#9AE6B4; }
+    ul { line-height: 1.8; }
+    small { opacity: 0.75; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 style="font-size:22px; margin: 8px 0 12px">HIDDN – Safe Static</h1>
+    <p style="margin:0 0 12px">Komplett statische Seite (ohne JavaScript). Wenn du das siehst, ist CDN/Rendering ok.</p>
+    <div class="card">
+      <img class="img" src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&auto=format&fit=crop" alt="Poster" />
+      <div style="padding:12px">
+        <div style="font-size:14px; opacity:0.9">Navigation (führt in die App)</div>
+        <ul>
+          <li><a href="/categories?safe=1">Kategorien</a></li>
+          <li><a href="/about?safe=1">About</a></li>
+          <li><a href="/?safe=1&novideo=1">Home (Poster‑first)</a></li>
+        </ul>
+        <small>Wenn die Links schwarz bleiben, blockiert wahrscheinlich JavaScript/Assets. Prüfe Content‑Blocker/Netzwerk.</small>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

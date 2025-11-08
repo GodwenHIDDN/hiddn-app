@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 40" aria-label="HIDDN">
+  <g fill="#111">
+    <!-- H -->
+    <rect x="22" y="5" width="8" height="30" rx="2"/>
+    <rect x="50" y="5" width="8" height="30" rx="2"/>
+    <rect x="30" y="17" width="20" height="6" rx="3"/>
+    <!-- I -->
+    <rect x="65" y="5" width="6" height="30" rx="3"/>
+    <!-- D -->
+    <path d="M78 5 h10 c10 0 16 6 16 15 s-6 15 -16 15 h-10 z M88 11 c6 0 10 4 10 9 s-4 9 -10 9 h-4 v-18z"/>
+    <!-- D -->
+    <path d="M108 5 h10 c10 0 16 6 16 15 s-6 15 -16 15 h-10 z M118 11 c6 0 10 4 10 9 s-4 9 -10 9 h-4 v-18z"/>
+    <!-- N -->
+    <path d="M140 5 v30 h8 V18 l14 17 h6 V5 h-8 v17 l-14 -17 h-6z"/>
+  </g>
+</svg>

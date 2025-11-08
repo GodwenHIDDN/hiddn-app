@@ -30,6 +30,7 @@ export default function ProductDetail() {
   const [activeIdx, setActiveIdx] = useState(0);
   const activeImg = useMemo(() => [hero, ...gallery][activeIdx] || hero, [activeIdx]);
   const [navH, setNavH] = useState<number>(56);
+  const [navGlass, setNavGlass] = useState<{ bg?: string; border?: string; blur?: string }>({});
   useEffect(() => {
     const getNav = () => document.querySelector('nav[aria-label="Hauptnavigation"]') as HTMLElement | null;
     const el = getNav();
@@ -38,6 +39,11 @@ export default function ProductDetail() {
       if (!n) return;
       const h = n.offsetHeight || 56;
       setNavH(h);
+      // mirror inline styles from Navbar for seamless filler
+      try {
+        const s = (n as HTMLElement).style as CSSStyleDeclaration & { WebkitBackdropFilter?: string };
+        setNavGlass({ bg: s.backgroundColor || undefined, border: s.borderColor || undefined, blur: (s.backdropFilter || (s as any).WebkitBackdropFilter) || undefined });
+      } catch {}
     };
     read();
     let ro: ResizeObserver | null = null;
@@ -119,6 +125,14 @@ export default function ProductDetail() {
         const items = raw ? JSON.parse(raw) : [];
         items.push({ product_id: id, qty: 1, price_cents: priceCents });
         localStorage.setItem(fk, JSON.stringify(items));
+        // Also mirror into pending so the Cart page (which reads hiddn_cart_pending) shows items immediately
+        try {
+          const pk = 'hiddn_cart_pending';
+          const praw = localStorage.getItem(pk);
+          const parr = praw ? JSON.parse(praw) : [];
+          parr.push({ product_id: id, qty: 1 });
+          localStorage.setItem(pk, JSON.stringify(parr));
+        } catch {}
         window.dispatchEvent(new Event('hiddn-update'));
         setMsg('Zum Warenkorb (lokal) hinzugefügt');
         setTimeout(() => setAdded(true), 180);
@@ -219,7 +233,10 @@ export default function ProductDetail() {
         )}
       </AnimatePresence>
 
-      <div style={{ position: 'fixed', left: 0, right: 0, bottom: `calc(${navH}px + 12px + env(safe-area-inset-bottom))`, zIndex: 60 }}>
+      {/* Seamless filler matching Navbar glass to avoid visible gap */}
+      <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, height: `calc(${navH}px + env(safe-area-inset-bottom))`, zIndex: 55, background: navGlass.bg || 'var(--bg)', borderTop: `1px solid ${navGlass.border || 'var(--border)'}`, backdropFilter: navGlass.blur || 'saturate(140%) blur(8px)', WebkitBackdropFilter: navGlass.blur || 'saturate(140%) blur(8px)' }} />
+
+      <div style={{ position: 'fixed', left: 0, right: 0, bottom: `calc(${navH}px - 2px + env(safe-area-inset-bottom))`, zIndex: 60 }}>
         <div className="mx-auto max-w-md border-t" style={{ background: 'var(--bg)', borderColor: 'var(--border)', backdropFilter: 'saturate(140%) blur(10px)', WebkitBackdropFilter: 'saturate(140%) blur(10px)', boxShadow: '0 -10px 24px rgba(0,0,0,0.06)' }}>
           <div className="px-5 py-3 grid grid-cols-[1fr_auto] gap-3 items-center">
             <button

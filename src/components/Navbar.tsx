@@ -58,9 +58,28 @@ export default function Navbar() {
           background: active ? 'var(--accent-soft)' : 'transparent'
         }}
       >
-        <Icon style={{ color: active ? 'var(--accent)' : (isDark ? 'var(--text)' : '#0F172A'), fontSize: 22 }} />
-        <span className={`leading-3 mt-0`} style={{ color: active ? 'var(--accent)' : (isDark ? 'var(--text)' : '#0F172A'), fontSize: 11, fontWeight: 600 }}>{label}</span>
-        {badge > 0 && <span className="absolute top-0 right-3 inline-flex items-center justify-center h-4 min-w-4 text-[10px] px-1 rounded-full pop" style={{ backgroundColor: 'var(--text)', color: 'var(--bg)' }}>{badge}</span>}
+        <div className="relative" style={{ lineHeight: 0 }}>
+          <Icon style={{ color: active ? 'var(--accent)' : (isDark ? 'var(--text)' : '#0F172A'), fontSize: 22 }} />
+          {badge > 0 && (
+            <span
+              className="absolute inline-flex items-center justify-center rounded-full pop"
+              style={{
+                top: -6,
+                right: -10,
+                height: 16,
+                minWidth: 16,
+                padding: '0 4px',
+                fontSize: 10,
+                fontWeight: 700,
+                backgroundColor: 'var(--text)',
+                color: 'var(--bg)'
+              }}
+            >
+              {badge}
+            </span>
+          )}
+        </div>
+        <span className={`leading-3 mt-0.5`} style={{ color: active ? 'var(--accent)' : (isDark ? 'var(--text)' : '#0F172A'), fontSize: 11, fontWeight: 600 }}>{label}</span>
       </Link>
     );
   };
@@ -132,7 +151,7 @@ export default function Navbar() {
       >
         <div className="justify-self-center"><Item to="/" icon={AiOutlineHome} label="Home" /></div>
         <div className="justify-self-center"><Item to="/categories" icon={AiOutlineSearch} label="Kategorien" /></div>
-        <div className="justify-self-center"><Item to="/favorites" icon={AiOutlineHeart} label="Wish List" badge={0} /></div>
+        <div className="justify-self-center"><Item to="/favorites" icon={AiOutlineHeart} label="Wish List" badge={wishCount} /></div>
         {isCreator && <div className="justify-self-center"><Item to="/creator" icon={AiOutlineCrown} label="Creator" /></div>}
         <div className="justify-self-center"><Item to="/cart" icon={BsBag} label="Warenkorb" badge={cartCount} /></div>
         <div className="justify-self-center"><Item to="/account" icon={AiOutlineUser} label="Account" /></div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '../lib/api';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,8 @@ export default function Cart() {
   const [loading, setLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetIndex, setSheetIndex] = useState<number | null>(null);
+  const [navH, setNavH] = useState<number>(56);
+  const [navGlass, setNavGlass] = useState<{ bg?: string; border?: string; blur?: string }>({});
 
   useEffect(() => {
     const readLocal = () => {
@@ -35,7 +37,34 @@ export default function Cart() {
     };
   }, []);
 
+  // Mirror navbar height and glass to position the checkout portal seamlessly
+  useEffect(() => {
+    const nav = document.querySelector('nav[aria-label="Hauptnavigation"]') as HTMLElement | null;
+    const read = () => {
+      const n = document.querySelector('nav[aria-label="Hauptnavigation"]') as HTMLElement | null;
+      if (!n) return;
+      setNavH(n.offsetHeight || 56);
+      try {
+        const s = (n as HTMLElement).style as CSSStyleDeclaration & { WebkitBackdropFilter?: string };
+        setNavGlass({ bg: s.backgroundColor || undefined, border: s.borderColor || undefined, blur: (s.backdropFilter || (s as any).WebkitBackdropFilter) || undefined });
+      } catch {}
+    };
+    read();
+    let ro: ResizeObserver | null = null;
+    if (nav && 'ResizeObserver' in window) {
+      try { ro = new ResizeObserver(read); ro.observe(nav); } catch {}
+    }
+    window.addEventListener('resize', read);
+    window.addEventListener('hiddn-update', read as any);
+    return () => {
+      window.removeEventListener('resize', read);
+      window.removeEventListener('hiddn-update', read as any);
+      if (ro) try { ro.disconnect(); } catch {}
+    };
+  }, []);
+
   const isEmpty = !loading && (!cart || !cart.items || cart.items.length === 0);
+  const totalCents = useMemo(() => (cart?.items || []).reduce((acc, _it, i) => acc + getPriceCents(i) * (_it.qty || 1), 0), [cart]);
 
   function openSheet(i: number) {
     setSheetIndex(i);
@@ -105,7 +134,7 @@ export default function Cart() {
   }
 
   return (
-    <main className="max-w-md mx-auto p-5 pb-24" style={{ paddingBottom: 'calc(56px + env(safe-area-inset-bottom))' }}>
+    <main className="max-w-md mx-auto p-5 pb-24" style={{ paddingBottom: `calc(${navH}px + 96px + env(safe-area-inset-bottom))` }}>
       <h1 className="font-display text-2xl mb-2" style={{ color: 'var(--text)' }}>Warenkorb</h1>
       {loading && <p className="opacity-80" style={{ color: 'var(--text)' }}>Warenkorb lädt…</p>}
       {isEmpty && (
@@ -156,87 +185,49 @@ export default function Cart() {
       )}
 
       {!isEmpty && (
-        <ul className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
           {cart?.items?.map((it, i) => (
-            <li key={i} className="rounded-2xl shadow-sm border overflow-hidden" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--card)' }}>
-              <div className="flex gap-3 p-3">
-                <div className="w-24 h-24 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
-                  <img
-                    src={`https://source.unsplash.com/featured/?fashion,product&sig=${900 + i}`}
-                    alt={it.product_id}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                    onClick={() => openSheet(i)}
-                  />
+            <div key={i} className="rounded-xl overflow-hidden border relative" style={{ borderColor: 'var(--border)', background: 'var(--card)' }}>
+              <button aria-label="Mehr" className="absolute top-2 right-2 w-8 h-8 rounded-full pressable" style={{ color: 'var(--text)' }} onClick={() => openSheet(i)}>⋯</button>
+              <div onClick={() => openSheet(i)}>
+                <div className="aspect-square overflow-hidden bg-neutral-100">
+                  <img src={`https://source.unsplash.com/featured/?fashion,product&sig=${900 + i}`} alt={it.product_id} className="w-full h-full object-cover" />
                 </div>
-                <div className="flex-1 min-w-0" onClick={() => openSheet(i)}>
-                  <div className="flex items-start justify-between">
-                    <p className="font-medium truncate text-[14px]" style={{ color: 'var(--text)' }}>{it.product_id}</p>
-                    <div className="flex items-center gap-2">
-                      <button aria-label="Mehr" onClick={(e) => { e.stopPropagation(); openSheet(i); }} className="w-8 h-8 rounded-full pressable" style={{ color: 'var(--text)' }}>⋯</button>
-                      <span className="text-sm font-medium opacity-90" style={{ color: 'var(--text)' }}>{(getPriceCents(i)/100).toFixed(2)} €</span>
-                    </div>
-                  </div>
-                  <div className="text-xs opacity-70 mt-0.5" style={{ color: 'var(--text)' }}>{it.size ? `Größe: ${it.size}` : 'Größe: —'}</div>
-                  <div className="mt-3 flex items-center justify-between">
-                    <div className="inline-flex items-center gap-2" role="group" aria-label="Menge">
-                      <button onClick={() => updateQtyAt(i, -1)} className="w-8 h-8 rounded-md border pressable" style={{ borderColor: 'var(--border)', color: 'var(--text)' }}>−</button>
-                      <span className="min-w-[28px] text-center text-sm" style={{ color: 'var(--text)' }}>{it.qty}</span>
-                      <button onClick={() => updateQtyAt(i, 1)} className="w-8 h-8 rounded-md border pressable" style={{ borderColor: 'var(--border)', color: 'var(--text)' }}>+</button>
-                    </div>
-                    <div className="text-sm font-medium" style={{ color: 'var(--text)' }}>Summe: {((getPriceCents(i)*it.qty)/100).toFixed(2)} €</div>
-                  </div>
-                  <div className="mt-3 flex gap-2">
-                    <button onClick={() => navigate('/checkout/address')} className="px-3 py-2 rounded-md text-sm pressable" style={{ backgroundColor: 'var(--text)', color: 'var(--bg)' }}>Zur Kasse</button>
-                    <button onClick={(e) => { e.stopPropagation(); removeAt(i); }} className="px-3 py-2 rounded-md text-sm border pressable" style={{ borderColor: 'var(--border)', color: 'var(--text)' }}>Entfernen</button>
-                  </div>
+                <div className="p-2">
+                  <div className="text-sm font-medium truncate" style={{ color: 'var(--text)' }}>{it.product_id}</div>
+                  <div className="text-xs opacity-80 mt-0.5" style={{ color: 'var(--text)' }}>{(getPriceCents(i)/100).toFixed(2)} €</div>
                 </div>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
-      )}
-      {/* Summary footer */}
-      {!isEmpty && (
-        <div className="fixed left-0 right-0 bottom-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-          <div className="m-4 rounded-2xl border p-4 shadow-lg" style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
-            {(() => {
-              const sum = (cart?.items || []).reduce((acc, _it, i) => acc + getPriceCents(i) * (_it.qty || 1), 0);
-              const sumEUR = (sum / 100).toFixed(2) + ' €';
-              return (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm opacity-80" style={{ color: 'var(--text)' }}>Lieferung</span>
-                    <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>0,00 €</span>
-                  </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-base font-semibold" style={{ color: 'var(--text)' }}>Gesamtkosten <span className="text-sm opacity-70">(inkl. MwSt.)</span></span>
-                    <span className="text-base font-semibold" style={{ color: 'var(--text)' }}>{sumEUR}</span>
-                  </div>
-                  <div className="mt-3 grid gap-2">
-                    <button onClick={() => navigate('/checkout/address')} className="w-full h-12 rounded-full pressable" style={{ backgroundColor: 'var(--text)', color: 'var(--bg)', fontWeight: 700, fontSize: 16 }}>Zur Kasse</button>
-                  </div>
-                  <div className="mt-2 flex items-center gap-3 opacity-85" style={{ color: 'var(--text)' }}>
-                    {/* Rechnung */}
-                    <svg width="46" height="18" viewBox="0 0 46 18" aria-label="Rechnung"><rect x="0.5" y="0.5" width="45" height="17" rx="3" fill="none" stroke="currentColor" /><text x="23" y="12" textAnchor="middle" fontSize="9" fill="currentColor">Rechnung</text></svg>
-                    {/* VISA */}
-                    <svg width="36" height="18" viewBox="0 0 36 18" aria-label="VISA"><rect width="36" height="18" rx="3" fill="none" stroke="currentColor"/><text x="18" y="12" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">VISA</text></svg>
-                    {/* Mastercard */}
-                    <svg width="36" height="18" viewBox="0 0 36 18" aria-label="Mastercard"><rect width="36" height="18" rx="3" fill="none" stroke="currentColor"/><circle cx="14" cy="9" r="5" fill="#EB001B"/><circle cx="22" cy="9" r="5" fill="#F79E1B" opacity="0.85"/></svg>
-                    {/* Amex */}
-                    <svg width="40" height="18" viewBox="0 0 40 18" aria-label="Amex"><rect width="40" height="18" rx="3" fill="none" stroke="currentColor"/><text x="20" y="12" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">AMEX</text></svg>
-                    {/* PayPal */}
-                    <svg width="40" height="18" viewBox="0 0 40 18" aria-label="PayPal"><rect width="40" height="18" rx="3" fill="none" stroke="currentColor"/><text x="20" y="12" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">PayPal</text></svg>
-                    {/* Apple Pay */}
-                    <svg width="44" height="18" viewBox="0 0 44 18" aria-label="Apple Pay"><rect width="44" height="18" rx="3" fill="none" stroke="currentColor"/><text x="22" y="12" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor"> Pay</text></svg>
-                    {/* SEPA */}
-                    <svg width="36" height="18" viewBox="0 0 36 18" aria-label="SEPA"><rect width="36" height="18" rx="3" fill="none" stroke="currentColor"/><text x="18" y="12" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">SEPA</text></svg>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
         </div>
+      )}
+      {/* Seamless checkout portal above Navbar */}
+      {!isEmpty && (
+        <>
+          <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, height: `calc(${navH}px + env(safe-area-inset-bottom))`, zIndex: 55, background: navGlass.bg || 'var(--bg)', borderTop: `1px solid ${navGlass.border || 'var(--border)'}`, backdropFilter: navGlass.blur || 'saturate(140%) blur(8px)', WebkitBackdropFilter: navGlass.blur || 'saturate(140%) blur(8px)' }} />
+          <div style={{ position: 'fixed', left: 0, right: 0, bottom: `calc(${navH}px - 2px + env(safe-area-inset-bottom))`, zIndex: 60 }}>
+            <div className="mx-auto max-w-md px-4">
+              <div className="rounded-2xl border p-4 shadow-lg" style={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)' }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm opacity-80" style={{ color: 'var(--text)' }}>Zwischensumme</span>
+                  <span className="text-base font-semibold" style={{ color: 'var(--text)' }}>{(totalCents/100).toFixed(2)} €</span>
+                </div>
+                <div className="mt-3 grid gap-2">
+                  <button onClick={() => navigate('/checkout/address')} className="w-full h-12 rounded-full pressable" style={{ backgroundColor: 'var(--text)', color: 'var(--bg)', fontWeight: 700, fontSize: 16 }}>Zur Kasse</button>
+                </div>
+                <div className="mt-2 flex items-center gap-3 opacity-85" style={{ color: 'var(--text)' }}>
+                  <svg width="46" height="18" viewBox="0 0 46 18" aria-label="Rechnung"><rect x="0.5" y="0.5" width="45" height="17" rx="3" fill="none" stroke="currentColor" /><text x="23" y="12" textAnchor="middle" fontSize="9" fill="currentColor">Rechnung</text></svg>
+                  <svg width="36" height="18" viewBox="0 0 36 18" aria-label="VISA"><rect width="36" height="18" rx="3" fill="none" stroke="currentColor"/><text x="18" y="12" textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">VISA</text></svg>
+                  <svg width="36" height="18" viewBox="0 0 36 18" aria-label="Mastercard"><rect width="36" height="18" rx="3" fill="none" stroke="currentColor"/><circle cx="14" cy="9" r="5" fill="#EB001B"/><circle cx="22" cy="9" r="5" fill="#F79E1B" opacity="0.85"/></svg>
+                  <svg width="40" height="18" viewBox="0 0 40 18" aria-label="Amex"><rect width="40" height="18" rx="3" fill="none" stroke="currentColor"/><text x="20" y="12" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">AMEX</text></svg>
+                  <svg width="40" height="18" viewBox="0 0 40 18" aria-label="PayPal"><rect width="40" height="18" rx="3" fill="none" stroke="currentColor"/><text x="20" y="12" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor">PayPal</text></svg>
+                  <svg width="44" height="18" viewBox="0 0 44 18" aria-label="Apple Pay"><rect width="44" height="18" rx="3" fill="none" stroke="currentColor"/><text x="22" y="12" textAnchor="middle" fontSize="9" fontWeight="700" fill="currentColor"> Pay</text></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Bottom Sheet for item actions */}

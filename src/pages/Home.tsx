@@ -662,6 +662,31 @@ export default function Home() {
         </section>
       )}
 
+      {/* Featured Produkte – kuratiertes 2x2 Grid für einen hochwertigen Einstieg */}
+      {items && items.length > 0 && (
+        <section className="mt-8 px-4">
+          <div className="flex items-baseline justify-between">
+            <h2 className="font-display text-2xl" style={{ color: 'var(--text)' }}>Empfohlen für dich</h2>
+            <Link to="/products" className="text-sm" style={{ color: ACCENT }}>Alle ansehen →</Link>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            {items.slice(0,4).map((p) => (
+              <Link key={p.id} to={`/product/${p.id}`} className="pressable" style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:16, overflow:'hidden' }}>
+                <div className="w-full" style={{ aspectRatio:'1/1' }}>
+                  <Img src={p.image_url || 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop'} alt={p.title} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-3">
+                  <div className="text-sm font-semibold truncate" style={{ color:'var(--text)' }}>{p.title}</div>
+                  <div className="text-xs opacity-80" style={{ color:'var(--text)' }}>
+                    {(p.price_cents/100).toLocaleString('de-DE', { style:'currency', currency: p.currency || 'EUR' })}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Top Hero Ad – colorful welcome promo */}
       <section className="px-6">
         <div
@@ -774,8 +799,8 @@ export default function Home() {
           <h2 className="font-display text-3xl leading-tight">Entdecke deinen Style</h2>
           <p className="mt-1 text-[14px] opacity-90">Frische Drops, klare Linien, iOS‑smooth Experience.</p>
           <div className="mt-4 flex gap-2">
-            <Link to="/products" className="px-4 py-3 rounded-md pressable" style={{ backgroundColor: '#fff', color: '#111' }}>Jetzt entdecken</Link>
-            <Link to="/categories" className="px-4 py-3 rounded-md pressable" style={{ backgroundColor: 'rgba(255,255,255,0.16)', color: '#fff', border: '1px solid rgba(255,255,255,0.32)' }}>Zu den Kategorien</Link>
+            <Link to="/products" className="pressable btn-solid" style={{ padding:'12px 18px', borderRadius:12 }}>Jetzt entdecken</Link>
+            <Link to="/categories" className="pressable btn-glass" style={{ padding:'12px 18px', borderRadius:12 }}>Zu den Kategorien</Link>
           </div>
         </div>
       </section>

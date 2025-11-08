@@ -664,42 +664,10 @@ export default function Home() {
 
       
 
-      {/* Top Hero Ad – colorful welcome promo */}
-      <section className="px-6">
-        <div
-          className="rounded-3xl p-7 pressable shadow-md"
-          style={{
-            background: 'linear-gradient(135deg, var(--hero-start) 0%, var(--hero-mid) 55%, var(--hero-end) 100%)',
-            color: '#fff'
-          }}
-        >
-          <div className="mb-2 opacity-90 text-[12px]">Willkommen</div>
-          <h2
-            className="font-display text-3xl leading-tight text-safe"
-            style={{ letterSpacing: '-0.01em', maxWidth: '92%', cursor: CREATOR_ENABLED && creator ? 'text' : 'auto' }}
-            onClick={() => { if (CREATOR_ENABLED && creator) setEditorOpen('topHero'); }}
-          >
-            {creatorData.topHero?.title || 'Finde deinen Look'}
-          </h2>
-          <p
-            className="mt-1 text-[14px] opacity-90 text-safe"
-            style={{ maxWidth: '92%', cursor: CREATOR_ENABLED && creator ? 'text' : 'auto' }}
-            onClick={() => { if (CREATOR_ENABLED && creator) setEditorOpen('topHero'); }}
-          >
-            {creatorData.topHero?.sub || 'Neue Drops, starke Farben, iOS‑smooth Experience.'}
-          </p>
-          <div className="mt-4 flex gap-2">
-            <Link to="/products" className="pressable btn-solid" style={{ padding:'12px 18px', borderRadius:12 }}>{creatorData.topHero?.cta1 || 'Jetzt shoppen'}</Link>
-            <Link to="/categories" className="pressable btn-glass" style={{ padding:'12px 18px', borderRadius:12 }}>{creatorData.topHero?.cta2 || 'Kategorien'}</Link>
-          </div>
-          {CREATOR_ENABLED && creator && (
-            <button className="mt-3 text-xs underline" onClick={()=>setEditorOpen('topHero')}>✎ Top‑Hero bearbeiten</button>
-          )}
-        </div>
-      </section>
+      
 
       {/* Boards entdecken (swiper) – very top */}
-      <section className="mt-8 px-6">
+      <section className="mt-10 px-6">
         <h2 className="text-xl font-semibold" style={{ color: 'var(--text)' }}>Boards entdecken</h2>
         <p className="text-neutral-600">Finde Inspiration für jeden Moment</p>
         <div className="mt-3 flex gap-4 overflow-x-auto no-scrollbar">
@@ -731,7 +699,7 @@ export default function Home() {
 
       {/* Neu auf HIDDN – kompakt, horizontal scrollend */}
       {newCreators && newCreators.cards.length > 0 && (
-        <section className="mt-6 px-4">
+        <section className="mt-10 px-6">
           <h2 className="text-xl font-semibold" style={{ color: 'var(--text)' }}>Neu auf HIDDN</h2>
           <div className="text-sm opacity-80" style={{ color: 'var(--text)' }}>Neue Creator (letzte 48h)</div>
           <div className="mt-3 flex gap-3 overflow-x-auto no-scrollbar pb-1">
@@ -783,7 +751,7 @@ export default function Home() {
       </section>
 
       {/* Inspirationen – horizontal portrait slider */}
-      <section className="mt-12 px-4">
+      <section className="mt-12 px-6">
         <div className="mb-2">
           <h2 className="font-display text-2xl" style={{ color: 'var(--text)' }}>Inspirationen – heute für dich</h2>
           <div className="text-sm opacity-80" style={{ color: 'var(--text)' }}>Swipe nach rechts für mehr</div>
@@ -806,7 +774,7 @@ export default function Home() {
 
       {/* Featured Produkte – nach Inspirationen, um den Flow edel zu halten */}
       {items && items.length > 0 && (
-        <section className="mt-8 px-4">
+        <section className="mt-10 px-6">
           <div className="flex items-baseline justify-between">
             <h2 className="font-display text-2xl" style={{ color: 'var(--text)' }}>Empfohlen für dich</h2>
             <Link to="/products" className="text-sm" style={{ color: ACCENT }}>Alle ansehen →</Link>

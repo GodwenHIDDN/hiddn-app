@@ -120,7 +120,7 @@ export default function OnboardingLite() {
   const panX = 0;
 
   return (
-    <div style={{ width: '100vw', height: '100dvh', background: '#000', color: '#fff', touchAction: 'none', overscrollBehavior: 'none' as any }}>
+    <div style={{ width: '100vw', height: '100dvh', background: '#000', color: '#fff', touchAction: 'auto', overscrollBehavior: 'none' as any }}>
       <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', zIndex: 0 }}>
         <video
           ref={videoRef}
@@ -154,7 +154,7 @@ export default function OnboardingLite() {
       <div
         ref={overlayRef}
         className="overlay"
-        style={{ position: 'fixed', inset: 0, transition: 'opacity 0.9s ease', zIndex: 1, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.35) 100%)' }}
+        style={{ position: 'fixed', inset: 0, transition: 'opacity 0.9s ease', zIndex: 1, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.35) 100%)', touchAction: 'pan-x' as any }}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         onClick={() => {

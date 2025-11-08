@@ -12,11 +12,6 @@ export default function Onboarding() {
     const prevBodyOverflow = document.body.style.overflow;
     const prevTouch = html.style.touchAction;
     const prevOver = (html as any).style.overscrollBehavior || '';
-    html.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    html.style.touchAction = 'none';
-    (html as any).style.overscrollBehavior = 'none';
-
     const preventPinch = (e: any) => { if ((e as WheelEvent).ctrlKey) { e.preventDefault(); } };
     const preventGesture = (e: Event) => { e.preventDefault(); };
     const onTouchMove = (e: TouchEvent) => {
@@ -24,11 +19,27 @@ export default function Onboarding() {
       if (!t) { e.preventDefault(); return; }
       if (!t.closest('.allow-scroll')) { e.preventDefault(); }
     };
+    // Apply locks while onboarding is visible
+    html.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    html.style.touchAction = 'none';
+    (html as any).style.overscrollBehavior = 'none';
     window.addEventListener('wheel', preventPinch, { passive: false } as any);
     window.addEventListener('gesturestart', preventGesture as any, { passive: false } as any);
     window.addEventListener('gesturechange', preventGesture as any, { passive: false } as any);
     window.addEventListener('touchmove', onTouchMove, { passive: false } as any);
-    return () => { document.body.classList.remove('hide-nav'); };
+    return () => {
+      document.body.classList.remove('hide-nav');
+      // Full cleanup to restore app gestures
+      html.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      html.style.touchAction = prevTouch;
+      (html as any).style.overscrollBehavior = prevOver;
+      window.removeEventListener('wheel', preventPinch as any);
+      window.removeEventListener('gesturestart', preventGesture as any);
+      window.removeEventListener('gesturechange', preventGesture as any);
+      window.removeEventListener('touchmove', onTouchMove as any);
+    };
   }, []);
 
   const [needTap] = useState(false);
@@ -37,6 +48,7 @@ export default function Onboarding() {
     if (typeof window === 'undefined' || !('matchMedia' in window)) return false;
     try { return window.matchMedia('(pointer: coarse)').matches; } catch { return false; }
   }, []);
+  const showLoginRef = useRef(false);
   // Ensure mobile autoplay works (iOS inline, muted before play)
   useEffect(() => {
     const v = videoRef.current; if (!v) return;
@@ -48,7 +60,10 @@ export default function Onboarding() {
       v.setAttribute('x5-playsinline', '');
       const tryPlay = async () => { try { await v.play(); } catch {} };
       tryPlay();
-      const onVis = () => { if (!document.hidden) tryPlay(); };
+      const onVis = () => {
+        if (document.hidden) { try { v.pause(); } catch {} }
+        else if (!showLoginRef.current) tryPlay();
+      };
       document.addEventListener('visibilitychange', onVis);
       return () => { document.removeEventListener('visibilitychange', onVis); };
     } catch {}
@@ -95,6 +110,14 @@ export default function Onboarding() {
   const [cur, setCur] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  useEffect(() => {
+    showLoginRef.current = showLogin;
+    const v = videoRef.current;
+    if (!v) return;
+    try {
+      if (showLogin) v.pause(); else v.play().catch(()=>{});
+    } catch {}
+  }, [showLogin]);
   const [leaving, setLeaving] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -221,9 +244,9 @@ export default function Onboarding() {
         style={{ position:'fixed', inset:0, width:'100%', height:'100%', objectFit:'cover', filter:'brightness(52%) contrast(1.06)', zIndex:0, background:'#000', opacity: vidReady ? 1 : 0, transition: 'opacity 420ms var(--ease-ios)' }}
       />
       {/* Tap overlay disabled by design */}
-      {/* Blur bands */}
-      <div style={{ position:'fixed', top:0, left:0, width:'100%', height:80, backdropFilter:'blur(10px)', background:'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0))', zIndex:2 }} />
-      <div style={{ position:'fixed', bottom:0, left:0, width:'100%', height:80, backdropFilter:'blur(10px)', background:'linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0))', zIndex:2 }} />
+      {/* Blur bands: avoid heavy backdrop blur on mobile */}
+      <div style={{ position:'fixed', top:0, left:0, width:'100%', height:80, backdropFilter: isCoarse ? 'none' : 'blur(8px)', background:'linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0))', zIndex:2 }} />
+      <div style={{ position:'fixed', bottom:0, left:0, width:'100%', height:80, backdropFilter: isCoarse ? 'none' : 'blur(8px)', background:'linear-gradient(to top, rgba(0,0,0,0.28), rgba(0,0,0,0))', zIndex:2 }} />
 
       {/* Content */}
       <div style={{ position:'relative', minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', zIndex:1, padding:'max(0px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom))', width:'86vw', maxWidth:520, margin:'0 auto', pointerEvents: showLogin ? 'none' : 'auto' }}>
@@ -259,7 +282,7 @@ export default function Onboarding() {
 
       {/* Login modal */}
       {showLogin && (
-        <div style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(0,0,0,0.5)', padding:'0', display:'block', pointerEvents:'auto', backdropFilter:'blur(4px)' }} onClick={closeSheet}>
+        <div style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(0,0,0,0.35)', padding:'0', display:'block', pointerEvents:'auto', backdropFilter: isCoarse ? 'none' : 'blur(4px)' }} onClick={closeSheet}>
           <div onClick={(e)=>e.stopPropagation()} style={{ position:'absolute', left:0, right:0, bottom:0, height:'92vh', background:'rgba(16,16,18,0.70)', backdropFilter:'blur(10px) saturate(120%)', borderTopLeftRadius:18, borderTopRightRadius:18, border:'1px solid rgba(255,255,255,0.14)', boxShadow:'0 -16px 32px rgba(0,0,0,0.38)', transform: 'translateY(0)', animation: closingSheet ? 'sheetDown 420ms cubic-bezier(0.22,1,0.36,1) both' : 'sheetUp 420ms cubic-bezier(0.22,1,0.36,1) both' }}>
             <div style={{ position:'relative', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', borderBottom:'1px solid rgba(255,255,255,0.12)', background:'transparent', borderTopLeftRadius:18, borderTopRightRadius:18 }}>
               <button onClick={closeSheet} aria-label="Schließen" style={{ background:'transparent', border:0, color:'#fff', fontSize:18, opacity:0.9 }}>✕</button>
@@ -313,9 +336,9 @@ export default function Onboarding() {
                 {/* Inputs or Reset */}
                 {!resetMode ? (
                   <div style={{ display:'grid', gap:12, marginBottom:16 }}>
-                    <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="E‑Mail‑Adresse*" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:16, boxShadow:'0 3px 8px rgba(0,0,0,0.22)' }} />
+                    <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="E‑Mail‑Adresse*" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:16, boxShadow:'0 2px 6px rgba(0,0,0,0.18)' }} />
                     <div>
-                      <input value={password} onChange={e=>setPassword(e.target.value)} placeholder="Passwort*" type="password" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:16, boxShadow:'0 3px 8px rgba(0,0,0,0.22)' }} />
+                      <input value={password} onChange={e=>setPassword(e.target.value)} placeholder="Passwort*" type="password" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:16, boxShadow:'0 2px 6px rgba(0,0,0,0.18)' }} />
                       {authMode === 'login' && (
                         <div style={{ marginTop:8, textAlign:'right' }}>
                           <button onClick={()=>{ setResetMode(true); setResetDone(false); setResetEmail(email || ''); }} className="underline" style={{ color:'#fff', opacity:0.9, fontSize:'clamp(12px, 3.3vw, 13px)', background:'transparent', border:0, cursor:'pointer' }}>Passwort vergessen?</button>

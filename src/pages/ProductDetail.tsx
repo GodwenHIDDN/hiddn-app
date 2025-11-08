@@ -1,5 +1,6 @@
 import { useLocation, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../lib/api';
 
 export default function ProductDetail() {
@@ -26,7 +27,8 @@ export default function ProductDetail() {
   const [added, setAdded] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-  const [showPlus, setShowPlus] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const activeImg = useMemo(() => [hero, ...gallery][activeIdx] || hero, [activeIdx]);
 
   // init saved state from wishlist
   useState(() => {
@@ -65,7 +67,6 @@ export default function ProductDetail() {
   async function addToCart() {
     try {
       setAdding(true);
-      setShowPlus(true);
       await api.post('/api/v1/cart', { product_id: id, qty: 1, price_cents: priceCents });
       setMsg('Zum Warenkorb hinzugefügt');
       try {
@@ -86,65 +87,59 @@ export default function ProductDetail() {
       setMsg('Konnte nicht zum Warenkorb hinzufügen');
     } finally {
       setAdding(false);
-      setTimeout(() => setShowPlus(false), 200);
       setTimeout(() => setAdded(false), 900);
     }
   }
 
   return (
-    <main className="max-w-md mx-auto p-6 pb-24" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))', color: 'var(--text)' }}>
-      <h1 className="font-display text-2xl mb-2">{title}</h1>
+    <main className="max-w-md mx-auto" style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom))', color: 'var(--text)' }}>
+      <section className="px-5 pt-4">
+        <h1 className="font-display text-2xl" style={{ letterSpacing: 0.3 }}>{title}</h1>
+        <div className="mt-1 flex items-baseline gap-2">
+          <div className="text-xl font-semibold">{(priceCents/100).toFixed(2)} EUR</div>
+          <span className="text-sm opacity-70">inkl. MwSt.</span>
+        </div>
+      </section>
 
-      <div className="rounded-2xl overflow-hidden shadow mb-4" style={{ backgroundColor: 'var(--card)' }}>
-        <img src={hero} alt={title} className="w-full h-[280px] object-cover" />
-      </div>
+      <section className="mt-3">
+        <div className="rounded-2xl overflow-hidden" style={{ marginLeft: 'calc(50% - 50vw)', marginRight: 'calc(50% - 50vw)', background: 'var(--card)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+          <motion.img
+            key={activeImg}
+            initial={{ opacity: 0.0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.35, ease: [0.22,1,0.36,1] }}
+            src={activeImg}
+            alt={title}
+            className="w-full"
+            style={{ aspectRatio: '4/5', objectFit: 'cover' }}
+          />
+        </div>
+        <div className="px-5 mt-3 flex gap-3 overflow-x-auto no-scrollbar">
+          {[hero, ...gallery].map((src, i) => (
+            <button key={i} onClick={()=>setActiveIdx(i)} className={`shrink-0 rounded-xl overflow-hidden border`} style={{ borderColor: 'var(--border)', boxShadow: i===activeIdx ? '0 0 0 2px var(--accent)' : 'none' }}>
+              <img src={src} alt={`${title} ${i+1}`} className="h-[92px] w-[92px] object-cover" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      </section>
 
-      <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4">
-        {gallery.map((src, i) => (
-          <img key={i} src={src} alt={`${title} ${i+1}`} className="h-[120px] w-[120px] object-cover rounded-xl shadow" loading="lazy" />
-        ))}
-      </div>
+      <section className="px-5 mt-5">
+        <p className="text-sm opacity-80">Ausgewählte {label} – inspiriert von aktuellen Trends. Bilder und Daten sind Demo‑Inhalte.</p>
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs opacity-85">
+          <div className="rounded-xl p-2" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>Kostenloser Versand</div>
+          <div className="rounded-xl p-2" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>30 Tage Retoure</div>
+          <div className="rounded-xl p-2" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>Klimaneutral</div>
+        </div>
+      </section>
 
-      <div className="flex items-center justify-between mb-3">
-        <div className="text-xl font-semibold">{(priceCents/100).toFixed(2)} EUR</div>
-        <span className="text-sm opacity-70">inkl. MwSt.</span>
-      </div>
-
-      <p className="text-sm opacity-80 mb-4">Ausgewählte {label} – inspiriert von aktuellen Trends. Bilder und Daten sind Demo‑Inhalte.</p>
-
-      {/* Action bar (large iOS pills) */}
-      <div className="grid grid-cols-1 gap-6 mt-2 mb-14">
-        <button
-          onClick={(e) => { (e.currentTarget as HTMLButtonElement).classList.add('pop'); setTimeout(() => (e.currentTarget as HTMLButtonElement).classList.remove('pop'), 240); addToCart(); }}
-          disabled={adding}
-          className="w-4/5 mx-auto rounded-full pressable btn-solid"
-          style={{ height: 68, fontSize: 18, fontWeight: 800, boxShadow: '0 10px 24px rgba(0,0,0,0.18)' }}
-        >
-          {showPlus ? '+' : added ? (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-label="Added"><path d="M20.285 6.709a1 1 0 0 1 0 1.414l-9.19 9.19a1 1 0 0 1-1.414 0L3.715 11.35a1 1 0 1 1 1.414-1.414l5.048 5.048 8.483-8.275a1 1 0 0 1 1.625 0z"/></svg>
-          ) : 'In den Warenkorb'}
-        </button>
-        <button
-          aria-label="Zu Favoriten hinzufügen"
-          onClick={(e) => { (e.currentTarget as HTMLButtonElement).classList.add('pop'); setTimeout(() => (e.currentTarget as HTMLButtonElement).classList.remove('pop'), 240); saveToWishlist(); }}
-          disabled={saving}
-          className="w-4/5 mx-auto rounded-full pressable"
-          style={{ height: 56, background: 'var(--card)', border: 'none', color: 'var(--text)', fontSize: 16, fontWeight: 700, marginTop: 2, boxShadow: '0 6px 16px rgba(0,0,0,0.08)' }}
-        >
-          {saved ? 'Aus Favoriten entfernen ♥' : 'Zu Favoriten hinzufügen ♡'}
-        </button>
-      </div>
-      {msg && <div className="text-xs opacity-70 mb-4" style={{ color: 'var(--text)' }}>{msg}</div>}
-
-      {/* Rich description */}
-      <section className="space-y-3 mb-8">
+      <section className="px-5 mt-6 space-y-4">
         <div>
-          <h3 className="font-display text-xl mb-1">Beschreibung</h3>
-          <p className="text-sm opacity-85">Zeitlose {label} mit cleanem Look. Weiche Haptik, hochwertiger Stoff, vielseitig kombinierbar – von Street bis Smart Casual.</p>
+          <h3 className="font-display text-xl">Beschreibung</h3>
+          <p className="text-sm opacity-85 mt-1">Zeitlose {label} mit cleanem Look. Weiche Haptik, hochwertiger Stoff, vielseitig kombinierbar – von Street bis Smart Casual.</p>
         </div>
         <div>
-          <h4 className="font-medium mb-1">Details</h4>
-          <ul className="text-sm opacity-85 list-disc pl-5">
+          <h4 className="font-medium">Details</h4>
+          <ul className="text-sm opacity-85 list-disc pl-5 mt-1">
             <li>Material: 100% Baumwolle</li>
             <li>Passform: Regular Fit</li>
             <li>Features: Kapuze, Metall‑Zip, Kängurutasche</li>
@@ -152,22 +147,61 @@ export default function ProductDetail() {
           </ul>
         </div>
         <div>
-          <h4 className="font-medium mb-1">Brand Story</h4>
-          <p className="text-sm opacity-85">HIDDN kuratiert Pieces von aufstrebenden Labels und etablierten Brands – mit Fokus auf Qualität, Komfort und Style.</p>
+          <h4 className="font-medium">Brand Story</h4>
+          <p className="text-sm opacity-85 mt-1">HIDDN kuratiert Pieces von aufstrebenden Labels und etablierten Brands – mit Fokus auf Qualität, Komfort und Style.</p>
         </div>
       </section>
 
-      <section className="mt-6">
+      <section className="px-5 mt-8 mb-28">
         <h2 className="font-display text-xl mb-2">Ähnliche Produkte</h2>
         <div className="grid grid-cols-2 gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-2xl overflow-hidden shadow" style={{ backgroundColor: 'var(--card)' }}>
+            <div key={i} className="rounded-2xl overflow-hidden" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
               <img src={`https://source.unsplash.com/featured/?${encodeURIComponent(label)},look&sig=${1200 + i}`} alt={`Similar ${i+1}`} className="w-full h-[180px] object-cover" />
               <div className="p-2 text-sm">{label} Pick #{i+1}</div>
             </div>
           ))}
         </div>
       </section>
+
+      <AnimatePresence>
+        {msg && (
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 30, opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.22,1,0.36,1] }}
+            className="fixed left-1/2 -translate-x-1/2 bottom-[calc(76px+env(safe-area-inset-bottom))] rounded-full px-4 py-2 text-sm"
+            style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--text)', boxShadow: '0 8px 18px rgba(0,0,0,0.10)' }}
+          >
+            {msg}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, paddingBottom: 'env(safe-area-inset-bottom)', zIndex: 50 }}>
+        <div className="mx-auto max-w-md border-t" style={{ background: 'var(--bg)', borderColor: 'var(--border)', backdropFilter: 'saturate(140%) blur(10px)', WebkitBackdropFilter: 'saturate(140%) blur(10px)', boxShadow: '0 -10px 24px rgba(0,0,0,0.06)' }}>
+          <div className="px-5 py-3 grid grid-cols-[1fr_auto] gap-3 items-center">
+            <button
+              onClick={(e) => { (e.currentTarget as HTMLButtonElement).classList.add('pop'); setTimeout(() => (e.currentTarget as HTMLButtonElement).classList.remove('pop'), 240); addToCart(); }}
+              disabled={adding}
+              className="rounded-xl pressable btn-solid"
+              style={{ height: 52, fontSize: 16, fontWeight: 800 }}
+            >
+              {added ? 'Hinzugefügt' : 'In den Warenkorb'}
+            </button>
+            <button
+              aria-label="Zu Favoriten hinzufügen"
+              onClick={(e) => { (e.currentTarget as HTMLButtonElement).classList.add('pop'); setTimeout(() => (e.currentTarget as HTMLButtonElement).classList.remove('pop'), 240); saveToWishlist(); }}
+              disabled={saving}
+              className="rounded-xl pressable"
+              style={{ width: 52, height: 52, background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--text)' }}
+            >
+              <span style={{ fontSize: 18 }}>{saved ? '♥' : '♡'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

@@ -37,6 +37,7 @@ import Onboarding from './pages/Onboarding';
 import OnboardingLite from './pages/OnboardingLite';
 import Shorts from './pages/Shorts';
 import IconMaker from './pages/IconMaker';
+import CreatorTest from './pages/CreatorTest';
 import OrderSuccess from './pages/OrderSuccess';
 import OrderCancel from './pages/OrderCancel';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -104,6 +105,7 @@ function AnimatedRoutes() {
           <Route path="/shorts" element={<Shorts />} />
           <Route path="/creator-pricing" element={<CreatorPricing />} />
           <Route path="/icon" element={<IconMaker />} />
+          <Route path="/creator-test" element={<CreatorTest />} />
           <Route path="/account/settings" element={<Settings />} />
           <Route path="/account/orders" element={<Orders />} />
           <Route path="/account/returns" element={<Returns />} />

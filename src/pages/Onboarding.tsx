@@ -7,6 +7,27 @@ export default function Onboarding() {
   const nav = useNavigate();
   useEffect(() => {
     document.body.classList.add('hide-nav');
+    const html = document.documentElement;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevTouch = html.style.touchAction;
+    const prevOver = (html as any).style.overscrollBehavior || '';
+    html.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    html.style.touchAction = 'none';
+    (html as any).style.overscrollBehavior = 'none';
+
+    const preventPinch = (e: any) => { if ((e as WheelEvent).ctrlKey) { e.preventDefault(); } };
+    const preventGesture = (e: Event) => { e.preventDefault(); };
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (!t) { e.preventDefault(); return; }
+      if (!t.closest('.allow-scroll')) { e.preventDefault(); }
+    };
+    window.addEventListener('wheel', preventPinch, { passive: false } as any);
+    window.addEventListener('gesturestart', preventGesture as any, { passive: false } as any);
+    window.addEventListener('gesturechange', preventGesture as any, { passive: false } as any);
+    window.addEventListener('touchmove', onTouchMove, { passive: false } as any);
     return () => { document.body.classList.remove('hide-nav'); };
   }, []);
 
@@ -183,7 +204,7 @@ export default function Onboarding() {
   }, []);
 
   return (
-    <main className="min-h-screen" style={{ background: '#000', color: '#fff' }}>
+    <main className="min-h-screen" style={{ background: '#000', color: '#fff', touchAction: 'none', overscrollBehavior: 'none' as any }}>
       {/* Background video */}
       <video
         ref={videoRef}
@@ -239,7 +260,7 @@ export default function Onboarding() {
       {/* Login modal */}
       {showLogin && (
         <div style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(0,0,0,0.5)', padding:'0', display:'block', pointerEvents:'auto', backdropFilter:'blur(4px)' }} onClick={closeSheet}>
-          <div onClick={(e)=>e.stopPropagation()} style={{ position:'absolute', left:0, right:0, bottom:0, height:'92vh', background:'rgba(16,16,18,0.72)', backdropFilter:'blur(14px) saturate(140%)', borderTopLeftRadius:18, borderTopRightRadius:18, border:'1px solid rgba(255,255,255,0.16)', boxShadow:'0 -24px 48px rgba(0,0,0,0.5)', transform: 'translateY(0)', animation: closingSheet ? 'sheetDown 420ms cubic-bezier(0.22,1,0.36,1) both' : 'sheetUp 420ms cubic-bezier(0.22,1,0.36,1) both' }}>
+          <div onClick={(e)=>e.stopPropagation()} style={{ position:'absolute', left:0, right:0, bottom:0, height:'92vh', background:'rgba(16,16,18,0.70)', backdropFilter:'blur(10px) saturate(120%)', borderTopLeftRadius:18, borderTopRightRadius:18, border:'1px solid rgba(255,255,255,0.14)', boxShadow:'0 -16px 32px rgba(0,0,0,0.38)', transform: 'translateY(0)', animation: closingSheet ? 'sheetDown 420ms cubic-bezier(0.22,1,0.36,1) both' : 'sheetUp 420ms cubic-bezier(0.22,1,0.36,1) both' }}>
             <div style={{ position:'relative', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', borderBottom:'1px solid rgba(255,255,255,0.12)', background:'transparent', borderTopLeftRadius:18, borderTopRightRadius:18 }}>
               <button onClick={closeSheet} aria-label="Schließen" style={{ background:'transparent', border:0, color:'#fff', fontSize:18, opacity:0.9 }}>✕</button>
               <div className="ios-type" style={{ color:'#fff', opacity:0.9, fontSize:12, display:'flex', gap:10, alignItems:'center' }}>
@@ -251,7 +272,7 @@ export default function Onboarding() {
               {/* sheen */}
               <div aria-hidden style={{ position:'absolute', inset:0, pointerEvents:'none', background:'linear-gradient(120deg, rgba(255,255,255,0.07), rgba(255,255,255,0) 30%)' }} />
             </div>
-            <div style={{ height:'calc(100% - 48px)', overflowY:'auto', padding:'22px 16px 28px' }}>
+            <div className="allow-scroll" style={{ height:'calc(100% - 48px)', overflowY:'auto', WebkitOverflowScrolling: 'touch', padding:'22px 16px 28px' }}>
               <div style={{ maxWidth: 440, width:'100%', margin:'0 auto' }}>
                 {/* Hero headline */}
                 <div style={{ position:'relative', textAlign:'center', padding:'22px 0 18px', marginBottom: 18 }}>
@@ -262,7 +283,7 @@ export default function Onboarding() {
                 {authMode === 'register' && (
                   <div className={`container-access ${codeOk === true ? 'access-verified' : ''} ${codeOk === false ? 'access-invalid' : ''}`} onPaste={onCodePaste as any}>
                     <div className="font-display" style={{ fontSize:16, marginBottom:6, color:'#fff' }}>Creator Access Code</div>
-                    <div style={{ fontSize:12, color:'#999', marginBottom:12 }}>12‑stelliger Zugangscode – exklusiv für HIDDN Creator. <button className="underline" style={{ background:'transparent', border:0, color:'#BBB', cursor:'pointer' }}>Code beantragen</button></div>
+                    <div style={{ fontSize:16, color:'#999', marginBottom:12 }}>12‑stelliger Zugangscode – exklusiv für HIDDN Creator. <button className="underline" style={{ background:'transparent', border:0, color:'#BBB', cursor:'pointer' }}>Code beantragen</button></div>
                     <div className="code-rows" role="group" aria-label="Creator Code">
                       {code.map((ch, i) => (
                         <input
@@ -273,6 +294,10 @@ export default function Onboarding() {
                           onChange={(e)=>onCodeChange(i, e.target.value)}
                           onKeyDown={(e)=>onCodeKey(i, e)}
                           inputMode="text"
+                          autoCapitalize="characters"
+                          autoComplete="one-time-code"
+                          enterKeyHint="next"
+                          style={{ fontSize: 18, textAlign:'center' }}
                           maxLength={1}
                         />
                       ))}
@@ -288,9 +313,9 @@ export default function Onboarding() {
                 {/* Inputs or Reset */}
                 {!resetMode ? (
                   <div style={{ display:'grid', gap:12, marginBottom:16 }}>
-                    <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="E‑Mail‑Adresse*" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:'clamp(13px, 3.6vw, 14px)', boxShadow:'0 6px 16px rgba(0,0,0,0.25)' }} />
+                    <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="E‑Mail‑Adresse*" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:16, boxShadow:'0 3px 8px rgba(0,0,0,0.22)' }} />
                     <div>
-                      <input value={password} onChange={e=>setPassword(e.target.value)} placeholder="Passwort*" type="password" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:'clamp(13px, 3.6vw, 14px)', boxShadow:'0 6px 16px rgba(0,0,0,0.25)' }} />
+                      <input value={password} onChange={e=>setPassword(e.target.value)} placeholder="Passwort*" type="password" style={{ width:'100%', maxWidth:'calc(100vw - 32px)', background:'#141414', color:'#fff', border:'1px solid rgba(255,255,255,0.18)', borderRadius:12, height:48, padding:'0 14px', fontSize:16, boxShadow:'0 3px 8px rgba(0,0,0,0.22)' }} />
                       {authMode === 'login' && (
                         <div style={{ marginTop:8, textAlign:'right' }}>
                           <button onClick={()=>{ setResetMode(true); setResetDone(false); setResetEmail(email || ''); }} className="underline" style={{ color:'#fff', opacity:0.9, fontSize:'clamp(12px, 3.3vw, 13px)', background:'transparent', border:0, cursor:'pointer' }}>Passwort vergessen?</button>

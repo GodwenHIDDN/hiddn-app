@@ -15,11 +15,29 @@ export default function OnboardingLite() {
   const [vidErr, setVidErr] = useState(false);
 
   useEffect(() => {
-    document.documentElement.style.overflow = 'hidden';
+    const html = document.documentElement;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevTouch = html.style.touchAction;
+    const prevOver = (html as any).style.overscrollBehavior || '';
+    html.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+    html.style.touchAction = 'none';
+    (html as any).style.overscrollBehavior = 'none';
+
+    const preventPinch = (e: any) => { if ((e as WheelEvent).ctrlKey) { e.preventDefault(); } };
+    const preventGesture = (e: Event) => { e.preventDefault(); };
+    window.addEventListener('wheel', preventPinch, { passive: false } as any);
+    window.addEventListener('gesturestart', preventGesture as any, { passive: false } as any);
+    window.addEventListener('gesturechange', preventGesture as any, { passive: false } as any);
     return () => {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
+      html.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      html.style.touchAction = prevTouch;
+      (html as any).style.overscrollBehavior = prevOver;
+      window.removeEventListener('wheel', preventPinch as any);
+      window.removeEventListener('gesturestart', preventGesture as any);
+      window.removeEventListener('gesturechange', preventGesture as any);
     };
   }, []);
 
@@ -102,7 +120,7 @@ export default function OnboardingLite() {
   const panX = 0;
 
   return (
-    <div style={{ width: '100vw', height: '100dvh', background: '#000', color: '#fff' }}>
+    <div style={{ width: '100vw', height: '100dvh', background: '#000', color: '#fff', touchAction: 'none', overscrollBehavior: 'none' as any }}>
       <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', zIndex: 0 }}>
         <video
           ref={videoRef}

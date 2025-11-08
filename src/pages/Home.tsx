@@ -566,7 +566,7 @@ export default function Home() {
         style={{
           position: 'relative',
           height: '78vh',
-          background: '#000',
+          background: isLightScheme ? 'var(--bg)' : '#000',
           backgroundImage: 'url(https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -599,12 +599,48 @@ export default function Home() {
         {/* Dark overlay increases with scroll to make hero recede */}
         <div
           aria-hidden
-          style={{ position:'absolute', inset:0, background:`rgba(0,0,0,${(0.0 + Math.pow(heroProgress, 1.4) * 0.6).toFixed(3)})`, zIndex:1, pointerEvents:'none' }}
+          style={{
+            position:'absolute',
+            inset:0,
+            background: isLightScheme
+              ? `rgba(255,255,255,${(0.0 + Math.pow(heroProgress, 1.4) * 0.38).toFixed(3)})`
+              : `rgba(0,0,0,${(0.0 + Math.pow(heroProgress, 1.4) * 0.6).toFixed(3)})`,
+            zIndex:1,
+            pointerEvents:'none'
+          }}
         />
         {/* Tap overlay disabled by design */}
         {/* Blur bands (fade in with scroll) */}
-        <div style={{ position:'absolute', top:0, left:0, width:'100%', height:120, backdropFilter:`blur(${(12*heroBlend).toFixed(2)}px)`, background:`linear-gradient(to bottom, rgba(0,0,0,${(0.35*heroBlend).toFixed(3)}), rgba(0,0,0,0))`, zIndex:1, pointerEvents:'none' }} />
-        <div style={{ position:'absolute', bottom:0, left:0, width:'100%', height:120, backdropFilter:`blur(${(12*heroBlend).toFixed(2)}px)`, background:`linear-gradient(to top, rgba(0,0,0,${(0.35*heroBlend).toFixed(3)}), rgba(0,0,0,0))`, zIndex:1, pointerEvents:'none' }} />
+        <div
+          style={{
+            position:'absolute',
+            top:0,
+            left:0,
+            width:'100%',
+            height:120,
+            backdropFilter:`blur(${(12*heroBlend).toFixed(2)}px)`,
+            background: isLightScheme
+              ? `linear-gradient(to bottom, rgba(255,255,255,${(0.32*heroBlend).toFixed(3)}), rgba(255,255,255,0))`
+              : `linear-gradient(to bottom, rgba(0,0,0,${(0.35*heroBlend).toFixed(3)}), rgba(0,0,0,0))`,
+            zIndex:1,
+            pointerEvents:'none'
+          }}
+        />
+        <div
+          style={{
+            position:'absolute',
+            bottom:0,
+            left:0,
+            width:'100%',
+            height:120,
+            backdropFilter:`blur(${(12*heroBlend).toFixed(2)}px)`,
+            background: isLightScheme
+              ? `linear-gradient(to top, rgba(255,255,255,${(0.32*heroBlend).toFixed(3)}), rgba(255,255,255,0))`
+              : `linear-gradient(to top, rgba(0,0,0,${(0.35*heroBlend).toFixed(3)}), rgba(0,0,0,0))`,
+            zIndex:1,
+            pointerEvents:'none'
+          }}
+        />
         {/* Centered content */}
         <div style={{ position:'relative', zIndex:2, height:'100%', display:'flex', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'max(0px, env(safe-area-inset-top)) 26px max(24px, env(safe-area-inset-bottom))' }}>
           <div style={{ width:'90vw', maxWidth:600, margin:'0 auto' }}>
@@ -671,14 +707,14 @@ export default function Home() {
         <p className="text-neutral-600">Finde Inspiration für jeden Moment</p>
         <div className="mt-3 flex gap-4 overflow-x-auto no-scrollbar">
           {[
-            { title: 'Streetwear Fits', img: 'https://source.unsplash.com/featured/?streetwear,person,model,portrait&sig=11' },
-            { title: 'Denim Looks', img: 'https://source.unsplash.com/featured/?denim,jeans,person,model&sig=12' },
-            { title: 'Winter Jackets', img: 'https://source.unsplash.com/featured/?parka,winter%20jacket,person,model&sig=13' },
-            { title: 'Dresses', img: 'https://source.unsplash.com/featured/?dress,person,model,portrait&sig=14' },
-            { title: 'Suits', img: 'https://source.unsplash.com/featured/?menswear,suit,man,model,portrait&sig=15' },
-            { title: 'Athleisure', img: 'https://source.unsplash.com/featured/?sportswear,tracksuit,person,model&sig=16' },
+            { title: 'Streetwear Fits', slug: 'streetwear-fits', img: 'https://source.unsplash.com/featured/?streetwear,person,model,portrait&sig=11' },
+            { title: 'Denim Looks', slug: 'denim-looks', img: 'https://source.unsplash.com/featured/?denim,jeans,person,model&sig=12' },
+            { title: 'Winter Jackets', slug: 'winter-jackets', img: 'https://source.unsplash.com/featured/?parka,winter%20jacket,person,model&sig=13' },
+            { title: 'Dresses', slug: 'dresses', img: 'https://source.unsplash.com/featured/?dress,person,model,portrait&sig=14' },
+            { title: 'Suits', slug: 'suits', img: 'https://source.unsplash.com/featured/?menswear,suit,man,model,portrait&sig=15' },
+            { title: 'Athleisure', slug: 'athleisure', img: 'https://source.unsplash.com/featured/?sportswear,tracksuit,person,model&sig=16' },
           ].map((b) => (
-            <Link key={b.title} to="/products" className="shrink-0 w-[70%]">
+            <Link key={b.title} to={`/boards/${b.slug}`} className="shrink-0 w-[70%]">
               <div className="overflow-hidden rounded-2xl shadow-sm" style={{ background: 'var(--card)' }}>
                 <div className="aspect-[9/16] w-full">
                   <Img
@@ -1139,7 +1175,7 @@ export default function Home() {
       </section>
 
       <section className="mt-10 px-4">
-        <Link to="/products" className="block">
+        <Link to="/spotlight/raw-essentials" className="block">
           <div className="rounded-3xl overflow-hidden" style={{ position:'relative', background:'linear-gradient(135deg, var(--hero-start), var(--hero-end))' }}>
             <div className="aspect-[16/9] w-full">
               <Img src="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?w=1600&auto=format&fit=crop" alt="Weekly Spotlight" className="w-full h-full object-cover opacity-80" />
@@ -1160,8 +1196,8 @@ export default function Home() {
             <h3 className="font-display text-2xl" style={{ color:'var(--text)' }}>HIDDN Weekly</h3>
             <div className="text-sm opacity-80" style={{ color:'var(--text)' }}>Neue Drops, Creator‑News und exklusive Aktionen.</div>
             <div className="mt-3 flex gap-2">
-              <Link to="/products" className="pressable btn-solid" style={{ padding:'12px 16px', borderRadius:12 }}>Jetzt abonnieren</Link>
-              <Link to="/about" className="pressable btn-glass" style={{ padding:'12px 16px', borderRadius:12 }}>Mehr erfahren</Link>
+              <Link to="/weekly/subscribe" className="pressable btn-solid" style={{ padding:'12px 16px', borderRadius:12 }}>Jetzt abonnieren</Link>
+              <Link to="/weekly" className="pressable btn-glass" style={{ padding:'12px 16px', borderRadius:12 }}>Mehr erfahren</Link>
             </div>
           </div>
         </div>

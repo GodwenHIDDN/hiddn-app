@@ -43,6 +43,10 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 const CreatorPricing = lazy(() => import('./pages/CreatorPricing'));
 const Products = lazy(() => import('./pages/Products'));
+const BoardsPage = lazy(() => import('./pages/BoardsPage'));
+const SpotlightPage = lazy(() => import('./pages/SpotlightPage'));
+const WeeklyPage = lazy(() => import('./pages/WeeklyPage'));
+const WeeklySubscribe = lazy(() => import('./pages/WeeklySubscribe'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 
 function AnimatedRoutes() {
@@ -86,6 +90,10 @@ function AnimatedRoutes() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/products/*" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/boards/:slug" element={<BoardsPage />} />
+          <Route path="/spotlight/:slug" element={<SpotlightPage />} />
+          <Route path="/weekly" element={<WeeklyPage />} />
+          <Route path="/weekly/subscribe" element={<WeeklySubscribe />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/creator" element={<CreatorDashboard />} />

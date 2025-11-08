@@ -166,7 +166,7 @@ function Frame() {
     <>
       {!hideChrome && <Header />}
       {hideChrome ? (
-        <div style={{ height: '100dvh', width: '100vw', overflow: isCreatorPricing ? 'auto' : 'hidden', background: '#050608' }}>
+        <div style={{ height: '100dvh', width: '100vw', overflow: isCreatorPricing ? 'auto' : 'hidden', background: isCreatorPricing ? '#050608' : 'var(--bg)' }}>
           {/* For creator pricing we keep normal padding; for onboarding we render raw */}
           {isCreatorPricing ? (
             <>
@@ -186,7 +186,7 @@ function Frame() {
         <div
           className="app-scroll"
           style={{
-            background:'#000',
+            background:'var(--bg)',
             paddingTop: 8,
             paddingBottom: 'calc(56px + env(safe-area-inset-bottom))'
           }}

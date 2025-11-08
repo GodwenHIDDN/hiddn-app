@@ -566,7 +566,7 @@ export default function Home() {
         className="full-bleed-bg"
         style={{
           position: 'relative',
-          height: '72vh',
+          height: '78vh',
           background: '#000',
           backgroundImage: 'url(https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop)',
           backgroundSize: 'cover',
@@ -609,10 +609,10 @@ export default function Home() {
         {/* Centered content */}
         <div style={{ position:'relative', zIndex:2, height:'100%', display:'flex', alignItems:'center', justifyContent:'center', textAlign:'center', padding:'max(0px, env(safe-area-inset-top)) 26px max(24px, env(safe-area-inset-bottom))' }}>
           <div style={{ width:'90vw', maxWidth:600, margin:'0 auto' }}>
-            <h1 className="font-display" style={{ letterSpacing:6, fontWeight:600, fontSize:32, marginBottom:14, color: isLightScheme ? '#0F172A' : 'var(--text)' }}>HIDDN</h1>
-            <p style={{ fontSize:14, letterSpacing:1, marginBottom:35, color: isLightScheme ? '#0F172A' : 'var(--text)' }}>Dein Stil. Dein Moment.</p>
-            <h2 className="font-display" style={{ fontWeight:500, fontSize:28, marginBottom:40, color: isLightScheme ? '#0F172A' : 'var(--text)' }}>Stay Hidden.</h2>
-            <Link to="/products" className="pressable" style={{ background: isLightScheme ? '#000' : 'var(--accent)', color:'#fff', padding:'12px 28px', borderRadius:10, fontSize:16, letterSpacing:1, display:'inline-block' }}>Jetzt starten</Link>
+            <h1 className="font-display" style={{ letterSpacing:4, fontWeight:600, fontSize:36, marginBottom:12, color: isLightScheme ? '#0F172A' : 'var(--text)' }}>HIDDN</h1>
+            <p style={{ fontSize:15, letterSpacing:0.6, marginBottom:28, color: isLightScheme ? '#0F172A' : 'var(--text)' }}>Dein Stil. Dein Moment.</p>
+            <h2 className="font-display" style={{ fontWeight:500, fontSize:32, marginBottom:34, color: isLightScheme ? '#0F172A' : 'var(--text)' }}>Stay Hidden.</h2>
+            <Link to="/products" className="pressable btn-solid" style={{ padding:'12px 28px', borderRadius:12, fontSize:16, letterSpacing:0.6, display:'inline-block' }}>Jetzt starten</Link>
           </div>
         </div>
       </section>
@@ -687,8 +687,8 @@ export default function Home() {
             {creatorData.topHero?.sub || 'Neue Drops, starke Farben, iOS‑smooth Experience.'}
           </p>
           <div className="mt-4 flex gap-2">
-            <Link to="/products" className="px-4 py-3 rounded-md pressable" style={{ backgroundColor: '#fff', color: '#111' }}>{creatorData.topHero?.cta1 || 'Jetzt shoppen'}</Link>
-            <Link to="/categories" className="px-4 py-3 rounded-md pressable" style={{ backgroundColor: 'rgba(255,255,255,0.16)', color: '#fff', border: '1px solid rgba(255,255,255,0.32)' }}>{creatorData.topHero?.cta2 || 'Kategorien'}</Link>
+            <Link to="/products" className="pressable btn-solid" style={{ padding:'12px 18px', borderRadius:12 }}>{creatorData.topHero?.cta1 || 'Jetzt shoppen'}</Link>
+            <Link to="/categories" className="pressable btn-glass" style={{ padding:'12px 18px', borderRadius:12 }}>{creatorData.topHero?.cta2 || 'Kategorien'}</Link>
           </div>
           {CREATOR_ENABLED && creator && (
             <button className="mt-3 text-xs underline" onClick={()=>setEditorOpen('topHero')}>✎ Top‑Hero bearbeiten</button>

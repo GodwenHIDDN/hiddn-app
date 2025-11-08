@@ -69,6 +69,8 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
+        role="main"
+        aria-live="polite"
         initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: reduceMotion ? 0 : -6 }}
@@ -131,7 +133,6 @@ function AnimatedRoutes() {
 
 const SPLASH_ENABLED = false; // temporarily disable splash to avoid gate on mobile
 const REENTRY_ENABLED = false; // keep re-entry splash disabled
-const ALWAYS_ONBOARDING = false; // disable auto-onboarding for stability
 
 function Frame() {
   const location = useLocation();

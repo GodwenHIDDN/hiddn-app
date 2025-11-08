@@ -36,8 +36,19 @@ export default function Header() {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
   return (
-    <header className="sticky top-0 z-20 shadow-md" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 8px)', backgroundColor: 'var(--header)', color: 'var(--text)' }}>
-      <div className="max-w-md mx-auto px-4 pb-2" style={{ color: 'var(--text)', position: 'relative' }}>
+    <header
+      className="sticky top-0 z-30 border-b"
+      style={{
+        paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
+        backgroundColor: 'var(--nav-bg)',
+        color: 'var(--text)',
+        WebkitBackdropFilter: 'saturate(140%) blur(10px)',
+        backdropFilter: 'saturate(140%) blur(10px)',
+        borderColor: 'var(--border)',
+        boxShadow: '0 8px 22px rgba(0,0,0,0.06)'
+      }}
+    >
+      <div className="max-w-md mx-auto px-5 pb-2" style={{ color: 'var(--text)', position: 'relative' }}>
         <div className="flex items-center justify-between" style={{ position: 'relative' }}>
           {/* Left: HIDDN wordmark (clickable) */}
           {showBack ? (
@@ -92,7 +103,7 @@ export default function Header() {
               letterSpacing: 0.3,
               color: 'var(--text)',
               border: '1px solid var(--border)',
-              background: 'linear-gradient(135deg, color-mix(in srgb, var(--card) 65%, #8b5cf6) 0%, color-mix(in srgb, var(--card) 65%, #06b6d4) 50%, color-mix(in srgb, var(--card) 65%, #22c55e) 100%)'
+              background: 'color-mix(in srgb, var(--card) 85%, rgba(139,92,246,0.25))'
             }}
           >
             Designed by Godwen Kaiser
@@ -121,17 +132,17 @@ export default function Header() {
           </div>
         )}
         {showSearch && (
-          <div className="relative mx-auto" style={{ marginTop: 8, width: '100%', maxWidth: 460 }}>
+          <div className="relative mx-auto" style={{ marginTop: 8, width: '100%', maxWidth: 560 }}>
             <div className="text-center" style={{ marginTop: 10 }}>
               <div
                 className={`inline-flex items-center justify-center header-search ${focused || query ? 'is-focused' : ''}`}
                 style={{
                   border: '1px solid var(--border)',
                   borderRadius: 28,
-                  padding: focused ? '12px 20px' : '10px 18px',
+                  padding: focused ? '12px 20px' : '11px 20px',
                   transition: 'all 160ms ease',
-                  width: focused ? '84%' : '82%',
-                  maxWidth: 420,
+                  width: '100%',
+                  maxWidth: 560,
                   backgroundColor: 'var(--input-bg)'
                 }}
               >

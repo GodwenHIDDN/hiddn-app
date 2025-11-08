@@ -779,10 +779,10 @@ export default function Home() {
             <h2 className="font-display text-2xl" style={{ color: 'var(--text)' }}>Empfohlen für dich</h2>
             <Link to="/products" className="text-sm" style={{ color: ACCENT }}>Alle ansehen →</Link>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="mt-4 grid grid-cols-2 gap-4">
             {items.slice(0,4).map((p) => (
-              <Link key={p.id} to={`/product/${p.id}`} className="pressable" style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:16, overflow:'hidden' }}>
-                <div className="w-full" style={{ aspectRatio:'1/1' }}>
+              <Link key={p.id} to={`/product/${p.id}`} className="pressable shadow" style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:18, overflow:'hidden' }}>
+                <div className="w-full" style={{ aspectRatio:'4/5' }}>
                   <Img src={p.image_url || 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop'} alt={p.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-3">

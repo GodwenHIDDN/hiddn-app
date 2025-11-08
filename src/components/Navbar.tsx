@@ -27,10 +27,19 @@ export default function Navbar() {
   const Item = ({ to, icon: Icon, label, badge = 0 }: { to: string; icon: any; label: string; badge?: number }) => {
     const active = pathname === to;
     return (
-      <Link to={to} aria-label={label} className={`relative flex flex-col items-center justify-center pressable ${active ? 'opacity-100' : 'opacity-85'}`} style={{ color: isDark ? 'var(--text)' : '#0F172A' }}>
+      <Link
+        to={to}
+        aria-label={label}
+        className={`relative flex flex-col items-center justify-center pressable ${active ? 'opacity-100' : 'opacity-85'}`}
+        style={{
+          color: isDark ? 'var(--text)' : '#0F172A',
+          padding: '6px 10px',
+          borderRadius: 12,
+          background: active ? 'var(--accent-soft)' : 'transparent'
+        }}
+      >
         <Icon style={{ color: active ? 'var(--accent)' : (isDark ? 'var(--text)' : '#0F172A'), fontSize: 22 }} />
-        <span className={`leading-3 mt-0`} style={{ color: active ? 'var(--accent)' : (isDark ? 'var(--text)' : '#0F172A'), fontSize: 11 }}>{label}</span>
-        {active && <span className="absolute bottom-0 h-0.5 w-6 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />}
+        <span className={`leading-3 mt-0`} style={{ color: active ? 'var(--accent)' : (isDark ? 'var(--text)' : '#0F172A'), fontSize: 11, fontWeight: 600 }}>{label}</span>
         {badge > 0 && <span className="absolute top-0 right-3 inline-flex items-center justify-center h-4 min-w-4 text-[10px] px-1 rounded-full pop" style={{ backgroundColor: 'var(--text)', color: 'var(--bg)' }}>{badge}</span>}
       </Link>
     );
@@ -73,11 +82,13 @@ export default function Navbar() {
   }, []);
   const bar = (
     <nav
+      role="navigation"
+      aria-label="Hauptnavigation"
       ref={navRef as any}
       className="fixed left-0 right-0 bottom-0 w-full z-40 border-t"
       style={{
-        height: 'calc(44px + env(safe-area-inset-bottom))',
-        minHeight: 'calc(44px + env(safe-area-inset-bottom))',
+        height: 'calc(56px + env(safe-area-inset-bottom))',
+        minHeight: 'calc(56px + env(safe-area-inset-bottom))',
         bottom: 0,
         backgroundColor: BG,
         borderColor: BORDER,
@@ -86,7 +97,7 @@ export default function Navbar() {
         display: 'grid',
         mixBlendMode: 'normal' as any,
         isolation: 'isolate' as any,
-        boxShadow: isDark ? '0 -4px 16px rgba(0,0,0,0.35)' : '0 -4px 16px rgba(0,0,0,0.05)',
+        boxShadow: isDark ? '0 -6px 18px rgba(0,0,0,0.35)' : '0 -6px 18px rgba(0,0,0,0.06)',
         willChange: 'transform',
         transform: 'translate3d(0,0,0)',
         WebkitTransform: 'translate3d(0,0,0)',
@@ -96,7 +107,7 @@ export default function Navbar() {
       }}
     >
       <div
-        className={`grid ${isCreator ? 'grid-cols-6' : 'grid-cols-5'} items-center h-full px-5 relative w-full`}
+        className={`grid ${isCreator ? 'grid-cols-6' : 'grid-cols-5'} items-center h-full px-6 relative w-full`}
         style={{ zIndex: 1, pointerEvents: 'auto', transform: 'translateZ(0) translateY(-4px)', transformOrigin: 'center center' }}
       >
         <div className="justify-self-center"><Item to="/" icon={AiOutlineHome} label="Home" /></div>

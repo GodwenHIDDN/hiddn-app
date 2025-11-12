@@ -1,13 +1,12 @@
 [build]
-base = "hiddn"
-command = "npm ci && npm run build"
-publish = "hiddn/dist"
+command = "npm run build"
+publish = "dist"
 
 [build.environment]
 NODE_VERSION = "20"
 
 [functions]
-directory = "hiddn/netlify/functions"
+directory = "netlify/functions"
 node_bundler = "esbuild"
 
 [[redirects]]
